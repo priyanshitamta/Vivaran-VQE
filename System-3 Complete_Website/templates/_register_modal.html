@@ -1,0 +1,58 @@
+<!-- Shared registration modal (learner or trainer) — used on the landing page and the login page. -->
+{% from '_skill_picker.html' import skill_picker %}
+<div class="modal" id="registerModal">
+  <div class="modal-card wide">
+    <button type="button" class="modal-close" data-close-modal aria-label="Close">&times;</button>
+    <h1 style="font-size:1.4rem; color:var(--brand-deep); margin-bottom:.25rem;">Hello user!</h1>
+    <p class="subtle" style="font-size:.9rem; margin-bottom:.9rem;" id="regSub">Create your learner account (for government officials).</p>
+    <div class="tabs tabs-2" id="regType" role="tablist">
+      <button type="button" class="active" data-type="learner">I am a Learner</button>
+      <button type="button" data-type="trainer">I am a Trainer</button>
+    </div>
+    <div id="regError" class="form-error" style="display:none;"></div>
+    <form id="registerForm" novalidate>
+      <div class="field">
+        <label for="regUsername">Username</label>
+        <input type="text" id="regUsername" name="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="regEmail">Government email ID</label>
+        <input type="email" id="regEmail" name="email" autocomplete="email" placeholder="username@gov.in" required>
+        <p class="hint">Must be an official <b>@gov.in</b> address, e.g. rahul@gov.in</p>
+      </div>
+      <div class="field">
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" name="password" autocomplete="new-password" minlength="8" required>
+        <p class="hint">At least 8 characters.</p>
+
+      </div>
+      <div data-for="learner">
+      <div class="field">
+        <label for="regRole">Designation</label>
+        <select id="regRole" name="role_id" required>
+          <option value="">Select your designation…</option>
+          {% for r in roles %}
+          <option value="{{ r.role_id }}">{{ r.designation }} — {{ r.department }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="regArea">Area of Experience</label>
+        <select id="regArea" name="area_of_experience" required>
+          <option value="">Select your field…</option>
+          {% for a in areas %}<option value="{{ a }}">{{ a }}</option>{% endfor %}
+        </select>
+      </div>
+      </div>
+      <div data-for="trainer" hidden>
+        <div class="field">
+          <label>Specialisations <span class="subtle">(pick one or more)</span></label>
+          {{ skill_picker(skill_groups, 'specialisations') }}
+          <p class="hint">Learners whose roles need these skills are assigned to you.</p>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;" id="regSubmit">Create account</button>
+    </form>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>

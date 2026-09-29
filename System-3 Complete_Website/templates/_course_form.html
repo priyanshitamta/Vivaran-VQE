@@ -1,0 +1,15 @@
+{# Course fields shared by upload + edit. Needs: form, groups, selected. #}
+{% from '_skill_picker.html' import skill_picker %}
+    <div class="form-grid">
+      <div class="field span-2"><label for="title">Course title</label><input id="title" name="title" value="{{ form.title or '' }}" required></div>
+      <div class="field span-2"><label for="description">Description</label><textarea id="description" name="description" rows="3">{{ form.description or '' }}</textarea></div>
+      <div class="field"><label for="category">Category</label><input id="category" name="category" value="{{ form.category or '' }}" placeholder="e.g. Data Science"></div>
+      <div class="field"><label for="designations">Target designations <span class="subtle">(optional)</span></label><input id="designations" name="designations" value="{{ form.designations or '' }}" placeholder="e.g. Deputy Director, Assistant Director — or All"></div>
+      <div class="field"><label for="target_level">Level</label>
+        <select id="target_level" name="target_level">{% for l in ['1','2','3'] %}<option value="{{ l }}" {{ 'selected' if form.target_level == l }}>{{ l }} — {{ ['Beginner','Intermediate','Advanced'][loop.index0] }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="duration_minutes">Duration (minutes) <span class="subtle">(optional)</span></label><input id="duration_minutes" name="duration_minutes" inputmode="numeric" value="{{ form.duration_minutes or '' }}"></div>
+      <div class="field span-2"><label for="videos">Video links</label>
+        <textarea id="videos" name="videos" rows="2" placeholder="https://youtu.be/…  (one per line)" required>{{ form.videos or '' }}</textarea>
+        <p class="hint">The quiz for this course is generated from these videos by the MCQ generator.</p></div>
+      <div class="field span-2"><label>Skills this course teaches</label>{{ skill_picker(groups, 'skills', selected) }}</div>
+    </div>

@@ -1,0 +1,208 @@
+================================================================================
+SYSTEM 1 - SKILL-GAP-TO-COURSE RECOMMENDATION ENGINE
+CONTEXT FOR TEAM
+Generated: 2026-09-03
+================================================================================
+
+This document captures the planned architecture, file structure, technology
+stack, and key design decisions for System 1 of the AI-enabled Skill
+Intelligence Platform. It is intended to give the team (backend, frontend,
+NLP) shared context before implementation begins.
+
+--------------------------------------------------------------------------------
+1. WHAT THIS MODULE DOES
+--------------------------------------------------------------------------------
+For every official (employee) in the Indian Official Statistical System:
+  1. Compute the skill gap between what their job role requires (Dataset 2)
+     and what they currently have (Dataset 3, quiz-verified preferred over
+     self-rated).
+  2. Recommend training courses from the catalogue (Dataset 4) that close
+     the largest gaps, ranked by a weighted tag-overlap score (Tier 1) and
+     optionally blended with semantic embedding similarity (Tier 2).
+  3. Explicitly report gaps that have NO course coverage (e.g. S014 Cloud
+     Computing) instead of silently dropping them.
+
+OUT OF SCOPE (do not build): MCQ/quiz generator, frontend/dashboards, real
+iGOT Karmayogi integration, authentication. Dataset 4 is the mock catalogue.
+
+--------------------------------------------------------------------------------
+2. PLANNED FILE STRUCTURE
+--------------------------------------------------------------------------------
+System-1 Recommandation_Engine/
++-- app/
+|   +-- __init__.py
+|   +-- main.py                      # FastAPI app: CORS, routers, startup
+|   |                                #   (loads data + precomputes embeddings)
+|   +-- config.py                    # Data dir, CSV filenames, model name,
+|   |                                #   default top_n, Tier-2 toggle
+|   +-- data/
+|   |   +-- __init__.py
+|   |   +-- loader.py                # Read 4 CSVs, strip whitespace, parse
+|   |   |                            #   packed fields, validate foreign keys
+|   |   +-- repositories.py          # SkillRepo/RoleRepo/EmployeeRepo/
+|   |                                #   CourseRepo - sole data access layer
+|   +-- services/
+|   |   +-- __init__.py
+|   |   +-- gap_service.py           # Stage B: skill-gap calculation
+|   |   +-- recommendation_service.py# Stage C+D: tag-overlap scoring,
+|   |                                #   Tier-2 embedding blend, unmatched-gap
+|   |                                #   handling
+|   +-- models/
+|   |   +-- __init__.py
+|   |   +-- schemas.py               # Pydantic response models: Gap,
+|   |                                #   Recommendation, UnmatchedGap,
+|   |                                #   EmployeeProfile
+|   +-- api/
+|       +-- __init__.py
+|       +-- routes.py                # The 3 endpoints (thin, delegate to
+|                                    #   services)
++-- tests/
+|   +-- __init__.py
+|   +-- conftest.py                  # Shared fixtures (loaded repos, client)
+|   +-- test_gap_service.py
+|   +-- test_recommendation_service.py
+|   +-- test_sanity.py               # The 3 Stage-F sanity checks as tests
++-- requirements.txt
++-- README.md                        # How to run + endpoint docs (integration
+|                                   #   contract for the frontend team)
++-- context_for_team.txt             # THIS FILE
++-- CLAUDE.md                        # Build spec (existing, authoritative)
++-- Dataset-1_Skill_Taxonomy.csv     # Data (existing, read-only)
++-- Dataset-2_Required_Competency.csv
++-- Dataset-3_Syn_Employee_Profiles.csv
++-- Dataset-4_Course_Catalouge.csv
+
+LAYERING RULE: routes -> services -> repositories -> CSVs.
+No raw CSV parsing outside the data layer; routes only translate requests to
+services and return schema-validated JSON.
+
+--------------------------------------------------------------------------------
+3. TECHNOLOGY STACK
+--------------------------------------------------------------------------------
+| Piece          | Choice        | Why                                      |
+|----------------|---------------|------------------------------------------|
+| Language       | Python 3.10+  | Data ecosystem + NLP dependencies        |
+| Web framework  | FastAPI       | Auto Swagger docs (/docs), Pydantic      |
+|                |               | validation, fastest to stand up          |
+| Server         | Uvicorn       | Standard ASGI server for FastAPI         |
+| CSV handling   | pandas        | One-line load of each CSV, easy joins    |
+
+PYTHON LIBRARIES
+--------------------------------------------------------------------------------
+| Library                       | Usage                                        |
+|-------------------------------|----------------------------------------------|
+| fastapi                       | App, routing, automatic OpenAPI docs         |
+| uvicorn[standard]             | Dev server (uvicorn app.main:app --reload)   |
+| pydantic                      | Response schemas - stable, validated JSON    |
+| pandas                        | Load/strip/parse the 4 CSVs at startup       |
+| sentence-transformers         | Tier 2 only: all-MiniLM-L6-v2 embeddings     |
+| torch (CPU)                   | Model backend (dependency of above)          |
+| numpy                         | Cosine similarity for Tier-2 blend           |
+| pytest                        | Stage-F sanity tests + unit tests            |
+| httpx                         | TestClient for hitting endpoints in tests    |
+| fastapi.middleware.cors       | CORS enabled now (built-in) for full-stack   |
+|                               | integration later                            |
+
+NOTE: scikit-learn deliberately NOT used - cosine similarity is trivial in
+numpy; sklearn adds install weight for no benefit.
+
+--------------------------------------------------------------------------------
+4. THE PIPELINE
+--------------------------------------------------------------------------------
+STAGE A - Data loading (once, at startup)
+  4 CSVs -> repositories -> parse packed fields -> validate foreign keys.
+
+STAGE B - Skill-gap calculation (per employee)
+  role requirements (D2) - employee's current levels (D3)
+  quiz_verified_skills preferred over self_rated_skills when both exist
+  gap = required_level - current_level ; keep only gap > 0
+  sort largest gap first
+  output: [{skill_id, skill_name, current_level, required_level,
+            gap, priority_weight}]
+
+STAGE C - Course matching (per employee)
+  Tier 1 (always): tag-overlap
+    courses whose skill_tags hit the gap skills
+    score = sum(priority_weight of matched gaps) * level relevance
+    return top-N (default 5)
+  Tier 2 (optional, behind config flag): semantic
+    embed course descriptions once at startup (all-MiniLM-L6-v2)
+    embed each gap skill as "{skill_name}: {description}"
+    cosine similarity blended with Tier-1 score for final ranking
+
+STAGE D - Unmatched gaps (required behaviour)
+  A gap skill with zero matching courses (S014 today) must return:
+    {"skill_id":"S014","skill_name":"Cloud Computing",
+     "status":"no_courses_available",
+     "message":"No courses currently available for Cloud Computing. This gap
+                has been flagged for the training team."}
+  Never crash, never silently omit, never invent a course.
+
+STAGE E - API layer (3 endpoints, JSON)
+  GET /employees/{employee_id}/gaps
+  GET /employees/{employee_id}/recommendations?top_n=5
+  GET /employees/{employee_id}/profile
+  404 for unknown employee_id; 422 for bad top_n.
+
+STAGE F - Sanity checks (automated in tests/)
+  1. Fully-qualified employee -> empty/short gaps, empty/minimal recs.
+  2. Employee gapped on S014 -> explicit no_courses_available response.
+  3. Typical mixed employee -> courses tagged with their gap skills rank
+     near the top.
+
+--------------------------------------------------------------------------------
+5. KEY DESIGN DECISIONS
+--------------------------------------------------------------------------------
+1. TIER 2 IS OPTIONAL AT RUNTIME.
+   Embeddings behind a config flag. If sentence-transformers is missing, the
+   service boots on Tier 1 only (warning logged) instead of crashing. Tier 1
+   alone passes all three sanity checks. Keeps dev setup light and gives a
+   fallback if the model download fails in a deploy environment.
+
+2. EMBEDDINGS PRECOMPUTED ONCE, NOT PER REQUEST.
+   784 course descriptions embedded into an in-memory matrix at startup (or
+   via a dedicated precompute script). Requests only embed one short text per
+   gap skill and do a matrix multiply - milliseconds, not seconds.
+
+3. CORS ENABLED FROM DAY ONE.
+   The full-stack frontend will call this from a different origin. Configurable,
+   not locked to localhost.
+
+4. STABLE RESPONSE SHAPES AS THE INTEGRATION CONTRACT.
+   The three endpoint shapes are the contract for the frontend team. FastAPI's
+   /docs (Swagger) + /openapi.json serve as the live source of truth.
+
+5. DEFENSIVE DATA HANDLING.
+   All foreign keys are currently valid (verified programmatically), but the
+   loader validates on read and logs - the code must not assume the datasets
+   stay clean if edited later.
+
+--------------------------------------------------------------------------------
+6. DATA FACTS VERIFIED ON THE PROVIDED DATASETS
+--------------------------------------------------------------------------------
+- D1 Skill Taxonomy  : 16 skills (S001-S016), 4 categories, 3-level scale.
+- D2 Required Comp.  : 800 rows, 60 roles (R001-R060), 12-15 skills per role.
+- D3 Employee Prof.  : 805 employees (E001-E805). All have quiz_verified_skills
+                       populated (none empty). All FK references valid.
+- D4 Course Catalog  : 784 courses (C001-C784). skill_tags comma-separated.
+- S014 (Cloud Computing): confirmed ZERO course coverage - intentional, drives
+  Stage D behaviour.
+- S016 note: CLAUDE.md claims no role requires S016, but Dataset 2 actually
+  contains 5 rows for S016. The data is treated as ground truth.
+- All foreign-key relationships verified with zero dangling references as of
+  this dataset version.
+- Level values consistently 1-3 across D2 and D4.
+- A handful of course descriptions are placeholder/low-information (e.g.
+  C001). Treated as normal data; Tier-1 tag scoring carries them.
+
+--------------------------------------------------------------------------------
+7. DELIVERABLE
+--------------------------------------------------------------------------------
+A runnable local backend module that:
+  1. Loads the 4 datasets.
+  2. Exposes the 3 Stage-E endpoints.
+  3. Passes the 3 Stage-F sanity checks (as pytest tests).
+  4. Ships with README.md (run instructions + endpoint docs).
+================================================================================
+END OF CONTEXT FOR TEAM
+================================================================================

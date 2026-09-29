@@ -1,0 +1,15 @@
+{# Multi-select of the 16 System-1 skills, grouped by category. #}
+{% macro skill_picker(groups, name, selected=[]) %}
+<div class="skill-picker">
+  {% for g in groups %}
+  <div class="sp-group">
+    <div class="sp-cat">{{ g.category }}</div>
+    <div class="sp-chips">
+      {% for s in g.skills %}
+      <label class="sp-chip"><input type="checkbox" name="{{ name }}" value="{{ s.skill_id }}" {{ 'checked' if s.skill_id in selected }}><span>{{ s.skill_name }}</span></label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

@@ -1,0 +1,104 @@
+{% extends 'learner_base.html' %}
+{% from '_learner_bits.html' import course_card, results_table %}
+{% block title %}My Dashboard · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="hero-banner">
+  <div class="hb-row">
+    <div class="donut small" style="--p: {{ overall }};"><span>{{ overall }}%</span></div>
+    <div>
+      <div class="eyebrow">Learner Dashboard</div>
+      <h1>Welcome, {{ user.username }}</h1>
+      <p>{{ profile.designation }} · {{ profile.department }} · {{ profile.area_of_experience }}</p>
+      <a class="hb-chips" href="{{ url_for('learner_progress') }}">
+        <span class="hb-chip">🔥 {{ prog.streak }}-day streak</span>
+        <span class="hb-chip">⭐ {{ prog.xp }} XP · Level {{ prog.level.number }} {{ prog.level.name }}</span>
+        <span class="hb-chip">🏅 {{ prog.badges }} badge{{ 's' if prog.badges != 1 }}</span>
+      </a>
+    </div>
+  </div>
+  <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+    {% if cont %}<a class="btn btn-light" href="{{ url_for('course_page', course_id=cont.course_id) }}">▶ Continue: {{ cont.course_title|truncate(34, True, '…') }}</a>
+    {% elif up_next %}<a class="btn btn-light" href="{{ url_for('course_page', course_id=up_next[0].course_id) }}">▶ Start: {{ up_next[0].course_title|truncate(34, True, '…') }}</a>{% endif %}
+    <a class="btn btn-light" href="{{ url_for('learner_roadmap') }}">View roadmap</a>
+  </div>
+</div>
+
+<div class="kpis" style="margin-top:1.25rem;">
+  <div class="kpi"><div class="n">{{ roadmap|length }}</div><div class="l">Courses in your path</div></div>
+  <div class="kpi"><div class="n">{{ completed|length }}</div><div class="l">Completed</div></div>
+  <div class="kpi"><div class="n">{{ in_progress|length }}</div><div class="l">In progress</div></div>
+  <div class="kpi"><div class="n">{{ passed }}</div><div class="l">Quizzes passed</div></div>
+  <div class="kpi"><div class="n">{{ (avg|string + '%') if avg is not none else '—' }}</div><div class="l">Average score</div></div>
+</div>
+
+<div class="dash-grid">
+  <div>
+    <div class="section">
+      <h2>Continue learning <a class="count" href="{{ url_for('learner_courses') }}">All my courses →</a></h2>
+      {% if in_progress %}
+      <div class="grid-cards">{% for e in in_progress[:4] %}{{ course_card(e) }}{% endfor %}</div>
+      {% else %}<p class="muted-empty">Nothing in progress — start the next course on your roadmap.</p>{% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Up next on your roadmap <a class="count" href="{{ url_for('learner_roadmap') }}">Full roadmap →</a></h2>
+      {% if up_next %}
+      <div class="roadmap compact">
+        {% for r in up_next %}
+        <a class="rm-step {{ r.status }}" href="{{ url_for('course_page', course_id=r.course_id) }}">
+          <div class="num">{{ r.step }}</div>
+          <div><div class="t">{{ r.course_title }}{% if r.added_by_trainer %} <span class="chip pin">📌 Added by your trainer</span>{% endif %}</div><div class="s">{{ r.reason }}</div></div>
+          <div class="right"><span class="pill {{ r.status }}">{{ 'In progress' if r.status == 'in_progress' else 'Not started' }}</span>
+            <div class="bar mt-1"><span style="width:{{ r.progress }}%"></span></div></div>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}<p class="muted-empty">🎉 You've completed your whole roadmap. <a href="{{ url_for('learner_recommended') }}">Get new recommendations</a>.</p>{% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Latest quiz results <a class="count" href="{{ url_for('learner_results') }}">All results →</a></h2>
+      {{ results_table(results[:5]) }}
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div class="panel-card accent">
+      <h3>My trainer</h3>
+      {% if my_trainer %}
+      <div class="trainer-card">
+        <div class="t-avatar">{{ my_trainer[0]|upper }}</div>
+        <div><b>{{ my_trainer }}</b><div class="sub">{{ trainer_email or '' }}</div></div>
+      </div>
+      <div class="mt-1">{% for sid in trainer_specs %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</div>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">A trainer will be assigned to you soon.</p>{% endif %}
+    </div>
+
+    <div class="panel-card">
+      <h3>Flashcards <a href="{{ url_for('learner_flashcards') }}">All decks</a></h3>
+      {% if decks %}
+      <ul class="mini-list">
+        {% for dk in decks[:4] %}
+        <li><div><a href="{{ url_for('course_flashcards', course_id=dk.course_id) }}"><b>{{ dk.title }}</b></a>
+          <div class="sub">{{ dk.mastered }}/{{ dk.total }} mastered{% if dk.review %} · <b style="color:var(--warning);">{{ dk.review }} to review</b>{% endif %}</div></div></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">Take any course quiz to unlock its flashcards.</p>{% endif %}
+    </div>
+
+    <div class="panel-card">
+      <h3>My skills <a href="{{ url_for('learner_skills') }}">Details</a></h3>
+      {% if gaps %}
+      <p class="sub" style="font-size:.85rem; margin-bottom:.6rem;">{{ gap_count }} skill gap{{ 's' if gap_count != 1 }} for your role — top ones:</p>
+      {% for g in gaps %}
+      <div class="gap-row mini">
+        <div>{{ g.skill_name }}</div>
+        <div class="gap-track"><span class="cur" style="width:{{ (g.current_level / 3 * 100)|round }}%"></span><span class="req" style="left:calc({{ (g.required_level / 3 * 100)|round }}% - 3px)"></span></div>
+        <div class="subtle" style="font-size:.78rem;">{{ g.current_level }}→{{ g.required_level }}</div>
+      </div>
+      {% endfor %}
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">No skill gaps — you meet every requirement for your role.</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

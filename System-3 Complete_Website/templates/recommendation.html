@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}iGOT Recommendation · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="center">
+  <div class="section-title" style="margin:.75rem 0 .25rem;">iGOT Recommendation</div>
+  <p class="subtle" style="font-size:.9rem;">Register an employee profile and get personalised course recommendations.</p>
+</div>
+
+{% if s1_down %}
+<div class="form-error mt-3">
+  <b>Cannot reach the recommendation engine</b> ({{ s1_url }}). Make sure System&nbsp;1 is running
+  before filling this form. If you started everything with the launcher, give it a moment and
+  <a href="{{ url_for('recommendation') }}" style="color:inherit; text-decoration:underline;">retry</a>.
+</div>
+{% else %}
+<div class="form-error mt-3" id="intakeError" style="display:none;"></div>
+
+<form id="intakeForm" novalidate class="mt-2">
+  <div class="field">
+    <label for="name">Full Name *</label>
+    <input type="text" id="name" autocomplete="off" required>
+  </div>
+
+  <div class="field">
+    <label for="designation">Designation *</label>
+    <select id="designation" required>
+      <option value="">Select designation</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="department">Department *</label>
+    <select id="department" required>
+      <option value="">Select a designation first</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="currentAssignment">Current Assignment</label>
+    <select id="currentAssignment">
+      <option value="">Select assignment</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="educationalQualifications">Educational Qualifications</label>
+    <select id="educationalQualifications">
+      <option value="">Select qualification</option>
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="workExperience">Work Experience (years) *</label>
+    <input type="number" id="workExperience" min="0" step="1" required>
+  </div>
+
+  <div class="field">
+    <label>Have you done any previous courses from iGOT?</label>
+    <select id="hasPreviousTrainings">
+      <option value="no">No</option>
+      <option value="yes">Yes</option>
+    </select>
+  </div>
+  <div class="field" id="previousTrainingsSection" style="display:none;">
+    <label>Previous Courses</label>
+    <div id="courseList"></div>
+    <p class="hint">Courses you have already completed from the iGOT catalogue. Click <b>+ Add course</b> to add more.</p>
+  </div>
+
+  <div class="section-title">Self-Rated Skills</div>
+  <p class="subtle" style="font-size:.9rem; margin-bottom:.75rem;">
+    Rate your current proficiency. Skills you leave unrated are treated as not self-assessed.
+  </p>
+  <div class="panel" style="padding: 1.25rem;">
+    <div id="skillsGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.8rem 1.2rem;"></div>
+  </div>
+
+  <div class="mt-4 center">
+    <button type="submit" class="btn btn-primary" id="intakeSubmit" style="min-width:220px;">Get Recommendations</button>
+  </div>
+</form>
+{% endif %}
+
+{% endblock %}
+{% block scripts %}
+<script>window.S3_META = {{ meta|tojson }};</script>
+<script src="{{ url_for('static', filename='js/intake.js') }}"></script>
+{% endblock %}

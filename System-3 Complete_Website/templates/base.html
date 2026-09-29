@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Vivaran-VQE{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-left">
+      <a class="nav-brand" href="{{ home_url }}">Vivaran<span class="dot">-VQE</span></a>
+      <nav class="nav-links">
+        {% if current_role == 'learner' %}
+          {# learners navigate with the sidebar (learner_base.html) #}
+        {% elif current_role == 'trainer' %}
+          <a href="{{ url_for('course_list') }}" class="{{ 'active' if request.endpoint in ('course_list','course_page') }}">Course Catalogue</a>
+        {% elif current_role == 'admin' %}
+          <a href="{{ url_for('course_list') }}" class="{{ 'active' if request.endpoint in ('course_list','course_page') }}">Course Catalogue</a>
+        {% endif %}
+      </nav>
+    </div>
+    <div class="nav-right">
+      {% block nav_back %}{% endblock %}
+      <div class="avatar-wrap">
+        <div class="avatar" id="avatarBtn" title="{{ current_user }}" tabindex="0">{{ current_user[0]|upper }}</div>
+        <div class="dropdown" id="dropdown">
+          <div class="hi">Hi, {{ current_user }}!{% if current_role %}<span class="role-tag">{{ current_role }}</span>{% endif %}</div>
+          <a href="{{ url_for('learner_dashboard') if current_role == 'learner' else (url_for('trainer_profile') if current_role == 'trainer' else url_for('profile')) }}">Profile</a>
+          <a href="{{ url_for('change_password') }}">Change password</a>
+          <a class="logout" href="{{ url_for('logout') }}">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  {% block main %}
+  <main class="container {% block container_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+  {% endblock %}
+
+  <script>
+    (function () {
+      var btn = document.getElementById('avatarBtn');
+      var dd = document.getElementById('dropdown');
+      function toggle(e) {
+        e.stopPropagation();
+        dd.classList.toggle('open');
+      }
+      function close() { dd.classList.remove('open'); }
+      btn.addEventListener('click', toggle);
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(e); }
+      });
+      document.addEventListener('click', close);
+
+      // Back button: rendered only on the profile page (which overrides the
+      // header's back-button block). Go to the previous page; if there is none
+      // in this tab, fall back to the intake rather than leaving the app.
+      var back = document.getElementById('backBtn');
+      if (back) back.addEventListener('click', function () {
+        if (window.history.length > 1) { window.history.back(); }
+        else { window.location.href = {{ home_url|tojson }}; }
+      });
+    })();
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

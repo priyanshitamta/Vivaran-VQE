@@ -1,0 +1,104 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Overview · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="hero-banner">
+  <div>
+    <div class="eyebrow">Admin Overview</div>
+    <h1>Welcome, {{ me.username }}</h1>
+    <p>{{ stats.learners }} learners · {{ stats.trainers }} trainers · {{ stats.courses }} live courses{% if pending_courses_n %} · {{ pending_courses_n }} course{{ 's' if pending_courses_n != 1 }} awaiting approval{% endif %}.</p>
+  </div>
+  <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{{ url_for('admin_reports') }}">Download reports</a>
+    <a class="btn btn-light" href="{{ url_for('admin_skill_gaps') }}">Skill-gap analytics</a>
+  </div>
+</div>
+
+<div class="kpis kpis-4" style="margin-top:1.25rem;">
+  <div class="kpi"><div class="n">{{ stats.learners }}</div><div class="l">Learners</div></div>
+  <div class="kpi"><div class="n">{{ stats.trainers }}</div><div class="l">Trainers</div></div>
+  <div class="kpi"><div class="n">{{ stats.enrollments }}</div><div class="l">Enrollments</div></div>
+  <div class="kpi"><div class="n">{{ stats.completions }}</div><div class="l">Completions</div></div>
+</div>
+
+<div class="dash-grid">
+  <div>
+    <div class="section">
+      <h2>Registrations <span class="count">last 14 days</span></h2>
+      <div class="panel-card">
+        <div class="vbars">
+          {% for d in days %}{% set r = reg[d] %}
+          <div class="vcol" title="{{ d }}: {{ r.learner }} learner(s), {{ r.trainer }} trainer(s)">
+            <div class="vstack" style="height:{{ ((r.learner + r.trainer) / reg_max * 100)|round }}%">
+              {% if r.trainer %}<span class="seg s2" style="flex:{{ r.trainer }}"></span>{% endif %}
+              {% if r.learner %}<span class="seg s1" style="flex:{{ r.learner }}"></span>{% endif %}
+            </div>
+            <div class="vlab">{{ d[8:] }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="legend"><span><i class="s1"></i>Learners</span><span><i class="s2"></i>Trainers</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Quiz outcomes <span class="count">last 14 days · pass mark {{ threshold|round|int }}%</span></h2>
+      <div class="panel-card">
+        <div class="vbars">
+          {% for d in days %}{% set r = quiz[d] %}
+          <div class="vcol" title="{{ d }}: {{ r.passed }} passed, {{ r.failed }} not passed">
+            <div class="vstack" style="height:{{ ((r.passed + r.failed) / quiz_max * 100)|round }}%">
+              {% if r.failed %}<span class="seg s3" style="flex:{{ r.failed }}"></span>{% endif %}
+              {% if r.passed %}<span class="seg s4" style="flex:{{ r.passed }}"></span>{% endif %}
+            </div>
+            <div class="vlab">{{ d[8:] }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="legend"><span><i class="s4"></i>Passed</span><span><i class="s3"></i>Not passed</span></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Learners by department <span class="count">top 8</span></h2>
+      {% if dept_rows %}
+      <div class="panel-card hbars">
+        {% for name, n in dept_rows %}
+        <div class="hrow"><span class="hl" title="{{ name }}">{{ name }}</span><span class="ht"><span style="width:{{ (n / dept_max * 100)|round }}%"></span></span><b>{{ n }}</b></div>
+        {% endfor %}
+      </div>
+      {% else %}<p class="muted-empty">No learners yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div class="panel-card">
+      <h3>Quiz pass rate</h3>
+      <div class="donut-wrap">
+        <div class="donut" style="--p: {{ stats.pass_rate or 0 }};"><span>{{ (stats.pass_rate|round|int|string + '%') if stats.pass_rate is not none else '—' }}</span></div>
+        <div class="sub">{{ passed }} of {{ stats.quizzes }} graded quizzes passed</div>
+      </div>
+    </div>
+
+    <div class="panel-card accent">
+      <h3>Needs action</h3>
+      <ul class="mini-list">
+        <li><a href="{{ url_for('admin_approvals', show='admin') }}"><b>{{ needs_admin_n }}</b> course{{ 's' if needs_admin_n != 1 }} only admin can approve</a><span class="sub">{{ pending_courses_n }} pending in total</span></li>
+        <li><a href="{{ url_for('admin_trainers') }}"><b>{{ stats.unassigned }}</b> learner{{ 's' if stats.unassigned != 1 }} without a trainer</a></li>
+        <li><a href="{{ url_for('admin_quality') }}#flagged"><b>{{ stats.flagged }}</b> AI-flagged question{{ 's' if stats.flagged != 1 }} not reviewed</a></li>
+        <li><a href="{{ url_for('admin_staff') }}"><b>{{ stats.inactive }}</b> deactivated account{{ 's' if stats.inactive != 1 }}</a></li>
+      </ul>
+    </div>
+
+    <div class="panel-card">
+      <h3>Recent activity <a href="{{ url_for('admin_audit') }}">Audit log</a></h3>
+      {% if activity %}
+      <ul class="mini-list">
+        {% for a in activity %}
+        <li><div><b>{{ a.actor or 'system' }}</b> {{ a.action|replace('_', ' ') }}{% if a.target %} · {{ a.target }}{% endif %}<div class="sub">{{ a.created_at[:16]|replace('T', ' ') }}{% if a.detail %} · {{ a.detail }}{% endif %}</div></div></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">No activity yet.</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

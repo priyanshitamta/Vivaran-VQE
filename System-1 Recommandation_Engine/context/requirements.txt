@@ -1,0 +1,24 @@
+# ==============================================================================
+# System 1 - Recommendation Engine | Core dependencies (Tier 1)
+# ------------------------------------------------------------------------------
+# Install with:  pip install -r requirements.txt
+# Python 3.10+ required.
+#
+# Tier 2 (semantic embedding) dependencies are intentionally separate to keep
+# this install light (~200 MB vs ~2.5 GB with torch). See requirements-tier2.txt.
+# ==============================================================================
+
+# --- Web framework ---
+fastapi>=0.115            # App, routing, automatic Swagger docs at /docs
+uvicorn[standard]>=0.30   # ASGI dev server; [standard] enables --reload
+
+# --- Data layer ---
+pandas>=2.2               # CSV loading and joins at startup
+
+# --- Response schemas ---
+pydantic>=2.7             # Validated JSON response shapes (also a FastAPI dep;
+                          #   listed explicitly because we import it directly)
+
+# --- Testing ---
+pytest>=8.0               # Stage-F sanity checks + unit tests
+httpx>=0.27               # Used by FastAPI's TestClient in tests

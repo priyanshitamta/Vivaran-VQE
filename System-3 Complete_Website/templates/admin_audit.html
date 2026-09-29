@@ -1,0 +1,20 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Audit log · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Audit log</div><h1>Who did what</h1>
+  <p class="subtle" style="font-size:.9rem;">Latest {{ rows|length }} events.</p></div>
+  <form method="get"><select name="action" onchange="this.form.submit()" aria-label="Filter by action">
+    <option value="">All actions</option>{% for a in actions %}<option value="{{ a }}" {{ 'selected' if a == action }}>{{ a|replace('_', ' ')|capitalize }}</option>{% endfor %}
+  </select></form>
+</div>
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>When</th><th>Who</th><th>Action</th><th>Target</th><th>Details</th></tr></thead>
+    <tbody>{% for r in rows %}
+      <tr><td class="subtle" style="white-space:nowrap;">{{ r.created_at[:16]|replace('T', ' ') }}</td>
+        <td><b>{{ r.actor or '—' }}</b>{% if r.actor_role %} <span class="subtle" style="font-size:.78rem;">{{ r.actor_role }}</span>{% endif %}</td>
+        <td><span class="chip">{{ r.action|replace('_', ' ') }}</span></td><td>{{ r.target or '' }}</td><td class="subtle">{{ r.detail or '' }}</td></tr>
+    {% else %}<tr><td colspan="5" class="muted-empty">No events yet.</td></tr>{% endfor %}</tbody>
+  </table>
+</div>
+{% endblock %}

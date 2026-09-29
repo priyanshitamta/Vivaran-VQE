@@ -1,0 +1,975 @@
+<title>iGOT Recommendation Engine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root {
+  /* System-2 palette — mirror of System-2 MCQ_Generator/templates/index.html */
+  --ground: #F8FAFC;        /* gray-50  page background */
+  --ink: #1F2937;           /* gray-900 primary text */
+  --ink-dim: #6B7280;       /* gray-500 muted text */
+  --accent: #E85F1C;        /* orange-600 primary CTA */
+  --accent-hover: #F2751F;  /* orange-500 CTA hover */
+  --border: #E5E7EB;        /* gray-200 borders / inputs */
+  --card: #FFFFFF;
+  --brand: #1573C9;         /* blue-600  links / focus rings / accents */
+  --brand-deep: #06305C;    /* blue-900  headings / wordmark */
+  --success: #15803D;
+  --warning: #D97706;
+  --danger: #C0392B;        /* red-600 */
+  --red-600: #C0392B;
+  --red-50: #FDECEC;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font: 400 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+
+/* Header */
+header {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--brand-deep);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Hero */
+.hero {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.hero-title {
+  font-size: clamp(1.25rem, 4.2vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--brand-deep);
+  white-space: nowrap;
+  margin-bottom: 0.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  color: var(--ink-dim);
+  margin-bottom: 2rem;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--ink);
+  border: 2px solid var(--ink);
+}
+
+.btn-outline:hover {
+  background: var(--ink);
+  color: var(--ground);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modal.active { display: flex; }
+
+.modal-content {
+  background: var(--card);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  padding: 3rem;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--ink-dim);
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.modal-close:hover { color: var(--ink); }
+
+.modal h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: var(--ink);
+}
+
+.modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.option-btn {
+  padding: 1.25rem 2rem;
+  background: var(--ground);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.option-btn:hover {
+  border-color: var(--brand);
+  background: white;
+}
+
+.option-btn.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.option-btn .hint {
+  display: none;
+  position: absolute;
+  bottom: -2rem;
+  left: 0;
+  font-size: 0.75rem;
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+
+.option-btn.disabled:hover .hint {
+  display: block;
+}
+
+/* Wizard */
+.wizard {
+  display: none;
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.wizard.active { display: block; }
+
+.wizard-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.wizard h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--ground);
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+}
+
+.skill-list, .course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.skill-row, .course-row {
+  display: grid;
+  grid-template-columns: 1fr 120px 40px;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.add-btn, .remove-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.add-btn {
+  background: var(--accent);
+  color: white;
+}
+
+.add-btn:hover { background: var(--accent-hover); }
+
+.remove-btn {
+  background: var(--danger);
+  color: white;
+}
+
+.remove-btn:hover { opacity: 0.8; }
+
+.wizard-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.btn-secondary {
+  background: var(--ground);
+  color: var(--ink);
+  border: 2px solid var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--ink);
+}
+
+/* Results */
+.results {
+  display: none;
+  max-width: 900px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+}
+
+.results.active { display: block; }
+
+.results h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.employee-id {
+  text-align: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--brand);
+}
+
+.course-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.course-card h3 {
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+
+.course-meta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+  color: var(--ink-dim);
+  margin-top: 0.75rem;
+}
+
+.results-lead {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--brand-deep);
+  text-align: center;
+  margin: 2rem 0 0.5rem;
+}
+
+.results-sub {
+  font-size: 0.875rem;
+  color: var(--ink-dim);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.disclaimer {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  font-size: 0.875rem;
+  color: var(--ink-dim);
+  text-align: center;
+}
+
+.results-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+@media (max-width: 768px) {
+  .skill-row, .course-row {
+    grid-template-columns: 1fr 100px 40px;
+  }
+
+  .hero-title {
+    font-size: 1.5rem;
+  }
+}
+
+.form-error {
+  display: none;
+  background: var(--red-50);
+  border: 1px solid #f3c6c1;
+  color: var(--red-600);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+  font-size: 0.95rem;
+}
+.form-error:not([hidden]) {
+  display: block;
+}
+</style>
+
+<!-- Landing -->
+<div id="landing">
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <div class="logo">iGOT Recommendation Engine</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1 class="hero-title">iGOT Recommendation Engine</h1>
+      <p class="hero-subtitle">(system 1)</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="openTestModal()">Test</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Test Modal -->
+<div class="modal" id="testModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeTestModal()">&times;</button>
+    <h2>Choose an Option</h2>
+    <div class="modal-options">
+      <button class="option-btn" onclick="startManualFlow()">
+        Fill Details Manually
+      </button>
+      <button class="option-btn disabled">
+        Upload Resume (PDF)
+        <span class="hint">Feature coming soon</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Wizard -->
+<div class="wizard" id="wizard">
+  <div class="wizard-card">
+    <h2>Employee Registration</h2>
+    <p style="color: var(--ink-dim); margin-bottom: 2rem;">Your data will be stored for training purposes.</p>
+
+    <form id="employeeForm" novalidate>
+      <div id="formError" class="form-error" hidden></div>
+      <div class="form-group">
+        <label>Full Name *</label>
+        <input type="text" id="name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Designation *</label>
+        <select id="designation" required onchange="updateDepartments()">
+          <option value="">Select designation</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Department *</label>
+        <select id="department" required>
+          <option value="">Select department</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Current Assignment</label>
+        <select id="currentAssignment">
+          <option value="">Select assignment</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Educational Qualifications</label>
+        <select id="educationalQualifications">
+          <option value="">Select qualification</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Work Experience (years) *</label>
+        <input type="number" id="workExperience" min="0" required>
+      </div>
+
+      <div class="form-group">
+        <label>Have you done any previous courses from iGOT?</label>
+        <select id="hasPreviousTrainings" onchange="togglePreviousTrainings()">
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="previousTrainingsSection" style="display: none;">
+        <label>Previous Courses</label>
+        <div class="course-list" id="courseList"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Self-Rated Skills</label>
+        <p style="font-size: 0.875rem; color: var(--ink-dim); margin-bottom: 1rem;">Add your skills and proficiency levels</p>
+        <div class="skill-list" id="selfRatedSkills"></div>
+      </div>
+
+      <div class="form-group" id="quizVerifiedSection" style="display: none;">
+        <label>Quiz-Verified Skills</label>
+        <p style="font-size: 0.875rem; color: var(--ink-dim); margin-bottom: 0.5rem;">A quiz-verified level overrides your self-rating for that skill.</p>
+        <div class="skill-list" id="quizVerifiedSkills"></div>
+      </div>
+
+      <div class="wizard-actions">
+        <button type="button" class="btn btn-secondary" onclick="backToLanding()">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Results -->
+<div class="results" id="results">
+  <h2>Thank You!</h2>
+  <div class="employee-id" id="employeeIdDisplay"></div>
+  <div class="disclaimer">Your data has been stored for training purposes.</div>
+
+  <div class="results-lead" id="resultsLead"></div>
+  <div class="results-sub" id="resultsSub"></div>
+
+  <div id="recommendationsContainer"></div>
+
+  <div class="results-actions">
+    <button class="btn btn-secondary" onclick="backToLanding()">Back to Home</button>
+    <button class="btn btn-primary" onclick="startAnotherEntry()">Start Filling Another Entry</button>
+  </div>
+</div>
+
+<script>
+// When this page is served by the engine itself (http://localhost:8000/),
+// all API calls use the same origin, so there is no CORS and no hardcoded
+// port. When the file is opened directly from disk (file://), fall back to
+// the fixed localhost address so it still works.
+const API_BASE = (location.protocol === 'file:') ? 'http://localhost:8000' : '';
+let allSkills = [];
+let allCourses = [];
+let allRoles = [];
+let uniqueValues = {};
+let rolesByDesignation = {};
+
+// Load metadata
+async function loadMetadata() {
+  try {
+    const [skills, courses, roles, unique] = await Promise.all([
+      fetch(`${API_BASE}/meta/skills`).then(r => {
+        if (!r.ok) throw new Error(`Skills fetch failed: ${r.status}`);
+        return r.json();
+      }),
+      fetch(`${API_BASE}/meta/courses`).then(r => {
+        if (!r.ok) throw new Error(`Courses fetch failed: ${r.status}`);
+        return r.json();
+      }),
+      fetch(`${API_BASE}/meta/roles`).then(r => {
+        if (!r.ok) throw new Error(`Roles fetch failed: ${r.status}`);
+        return r.json();
+      }),
+      fetch(`${API_BASE}/meta/unique-values`).then(r => {
+        if (!r.ok) throw new Error(`Unique values fetch failed: ${r.status}`);
+        return r.json();
+      })
+    ]);
+
+    allSkills = skills;
+    allCourses = courses;
+    allRoles = roles;
+    uniqueValues = unique;
+
+    // Build designation -> departments map
+    rolesByDesignation = {};
+    roles.forEach(role => {
+      if (!rolesByDesignation[role.designation]) {
+        rolesByDesignation[role.designation] = new Set();
+      }
+      rolesByDesignation[role.designation].add(role.department);
+    });
+
+    populateDropdowns();
+    console.log('Metadata loaded:', { skills: allSkills.length, courses: allCourses.length, roles: allRoles.length });
+  } catch (err) {
+    console.error('Metadata load error:', err);
+    alert(`Could not reach the recommendation engine (${API_BASE || 'http://localhost:8000'}).\n\nMake sure the server is running in the terminal first:\n    python -m uvicorn app.main:app --host 127.0.0.1 --port 8000\nThen refresh this page.`);
+  }
+}
+
+function populateDropdowns() {
+  console.log('Populating dropdowns...');
+
+  // Designation
+  const designationSelect = document.getElementById('designation');
+  const uniqueDesignations = [...new Set(allRoles.map(r => r.designation))].sort();
+  console.log('Designations:', uniqueDesignations.length);
+  uniqueDesignations.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d;
+    opt.textContent = d;
+    designationSelect.appendChild(opt);
+  });
+
+  // Current Assignment
+  const assignmentSelect = document.getElementById('currentAssignment');
+  const assignments = uniqueValues.current_assignment || [];
+  console.log('Assignments:', assignments.length);
+  assignments.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    assignmentSelect.appendChild(opt);
+  });
+
+  // Educational Qualifications
+  const qualSelect = document.getElementById('educationalQualifications');
+  const quals = uniqueValues.educational_qualifications || [];
+  console.log('Qualifications:', quals.length);
+  quals.forEach(v => {
+    const opt = document.createElement('option');
+    opt.value = v;
+    opt.textContent = v;
+    qualSelect.appendChild(opt);
+  });
+
+  console.log('Dropdowns populated successfully');
+}
+
+function updateDepartments() {
+  const designation = document.getElementById('designation').value;
+  const deptSelect = document.getElementById('department');
+  deptSelect.innerHTML = '<option value="">Select department</option>';
+
+  if (designation && rolesByDesignation[designation]) {
+    const depts = Array.from(rolesByDesignation[designation]).sort();
+    depts.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d;
+      opt.textContent = d;
+      deptSelect.appendChild(opt);
+    });
+  }
+}
+
+function togglePreviousTrainings() {
+  const hasPrev = document.getElementById('hasPreviousTrainings').value === 'yes';
+  document.getElementById('previousTrainingsSection').style.display = hasPrev ? 'block' : 'none';
+  document.getElementById('quizVerifiedSection').style.display = hasPrev ? 'block' : 'none';
+
+  if (hasPrev && document.getElementById('courseList').children.length === 0) {
+    addCourseRow();
+    addSkillRow('selfRatedSkills');
+    addSkillRow('quizVerifiedSkills');
+  }
+}
+
+function addCourseRow() {
+  const container = document.getElementById('courseList');
+  const row = document.createElement('div');
+  row.className = 'course-row';
+
+  const select = document.createElement('select');
+  select.innerHTML = '<option value="">Select course</option>';
+
+  if (allCourses.length === 0) {
+    console.warn('No courses loaded yet');
+  }
+
+  allCourses.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.course_id;
+    opt.textContent = `${c.course_id} - ${c.course_title}`;
+    select.appendChild(opt);
+  });
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'add-btn';
+  addBtn.textContent = '+';
+  addBtn.onclick = () => addCourseRow();
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '−';
+  removeBtn.onclick = () => row.remove();
+
+  row.appendChild(select);
+  row.appendChild(document.createElement('div')); // spacer
+  if (container.children.length === 0) {
+    row.appendChild(addBtn);
+  } else {
+    row.appendChild(removeBtn);
+  }
+
+  container.appendChild(row);
+}
+
+function addSkillRow(containerId) {
+  const container = document.getElementById(containerId);
+  const row = document.createElement('div');
+  row.className = 'skill-row';
+
+  const skillSelect = document.createElement('select');
+  skillSelect.innerHTML = '<option value="">Select skill</option>';
+
+  if (allSkills.length === 0) {
+    console.warn('No skills loaded yet');
+  }
+
+  const usedSkills = Array.from(container.querySelectorAll('select:first-child')).map(s => s.value).filter(Boolean);
+  allSkills.filter(s => !usedSkills.includes(s.skill_id)).forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s.skill_id;
+    opt.textContent = s.skill_name;
+    skillSelect.appendChild(opt);
+  });
+
+  const levelSelect = document.createElement('select');
+  levelSelect.innerHTML = `
+    <option value="">Level</option>
+    <option value="1">Beginner</option>
+    <option value="2">Intermediate</option>
+    <option value="3">Advanced</option>
+  `;
+
+  const addBtn = document.createElement('button');
+  addBtn.type = 'button';
+  addBtn.className = 'add-btn';
+  addBtn.textContent = '+';
+  addBtn.onclick = () => addSkillRow(containerId);
+
+  const removeBtn = document.createElement('button');
+  removeBtn.type = 'button';
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '−';
+  removeBtn.onclick = () => row.remove();
+
+  row.appendChild(skillSelect);
+  row.appendChild(levelSelect);
+  if (container.children.length === 0) {
+    row.appendChild(addBtn);
+  } else {
+    row.appendChild(removeBtn);
+  }
+
+  container.appendChild(row);
+}
+
+// Modal
+function openTestModal() {
+  document.getElementById('testModal').classList.add('active');
+}
+
+function closeTestModal() {
+  document.getElementById('testModal').classList.remove('active');
+}
+
+async function startManualFlow() {
+  closeTestModal();
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('wizard').classList.add('active');
+
+  // Load metadata if not already loaded
+  if (allSkills.length === 0) {
+    await loadMetadata();
+  }
+
+  // Add initial skill row
+  if (document.getElementById('selfRatedSkills').children.length === 0) {
+    addSkillRow('selfRatedSkills');
+  }
+}
+
+function backToLanding() {
+  document.getElementById('landing').style.display = 'block';
+  document.getElementById('wizard').classList.remove('active');
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('employeeForm').reset();
+}
+
+function startAnotherEntry() {
+  document.getElementById('results').classList.remove('active');
+  document.getElementById('wizard').classList.add('active');
+  document.getElementById('employeeForm').reset();
+  document.getElementById('selfRatedSkills').innerHTML = '';
+  document.getElementById('quizVerifiedSkills').innerHTML = '';
+  document.getElementById('courseList').innerHTML = '';
+  addSkillRow('selfRatedSkills');
+}
+
+// Submit
+function showFormError(message) {
+  const el = document.getElementById('formError');
+  el.textContent = message;
+  el.hidden = false;
+  const wizard = document.getElementById('wizard');
+  if (wizard.classList.contains('active')) {
+    wizard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+function clearFormError() {
+  const el = document.getElementById('formError');
+  el.hidden = true;
+  el.textContent = '';
+}
+
+function validateFormFields() {
+  const missing = [];
+  if (!document.getElementById('name').value.trim()) missing.push('Full Name');
+  if (!document.getElementById('designation').value) missing.push('Designation');
+  if (!document.getElementById('department').value) missing.push('Department');
+  const workEl = document.getElementById('workExperience');
+  if (workEl.value === '') missing.push('Work Experience (years)');
+  const years = parseInt(workEl.value);
+  if (workEl.value !== '' && (isNaN(years) || years < 0)) {
+    return 'Work Experience must be a number, 0 or more.';
+  }
+  if (missing.length) {
+    return 'Please fill in these fields first: ' + missing.join(', ') + '.';
+  }
+  return null;
+}
+
+document.getElementById('employeeForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearFormError();
+
+  const submitBtn = document.getElementById('employeeForm').querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Submitting…';
+
+  try {
+    const problem = validateFormFields();
+    if (problem) {
+      showFormError(problem);
+      return;
+    }
+
+    const designation = document.getElementById('designation').value;
+    const department = document.getElementById('department').value;
+    const role = allRoles.find(r => r.designation === designation && r.department === department);
+
+    if (!role) {
+      showFormError(`No role is defined for ${designation} / ${department}. Try another combination.`);
+      return;
+    }
+
+    const selfRatedSkills = {};
+    document.querySelectorAll('#selfRatedSkills .skill-row').forEach(row => {
+      const skill = row.querySelector('select:first-child').value;
+      const levelSelects = row.querySelectorAll('select');
+      const level = levelSelects.length > 1 ? levelSelects[1].value : '';
+      if (skill && level) selfRatedSkills[skill] = parseInt(level);
+    });
+
+    const quizVerifiedSkills = {};
+    document.querySelectorAll('#quizVerifiedSkills .skill-row').forEach(row => {
+      const skill = row.querySelector('select:first-child').value;
+      const levelSelects = row.querySelectorAll('select');
+      const level = levelSelects.length > 1 ? levelSelects[1].value : '';
+      if (skill && level) quizVerifiedSkills[skill] = parseInt(level);
+    });
+
+    const previousTrainings = [];
+    document.querySelectorAll('#courseList select').forEach(select => {
+      if (select.value) previousTrainings.push(select.value);
+    });
+
+    const payload = {
+      name: document.getElementById('name').value.trim(),
+      role_id: role.role_id,
+      designation,
+      department,
+      current_assignment: document.getElementById('currentAssignment').value || null,
+      educational_qualifications: document.getElementById('educationalQualifications').value || null,
+      work_experience_years: parseInt(document.getElementById('workExperience').value),
+      self_rated_skills: selfRatedSkills,
+      quiz_verified_skills: quizVerifiedSkills,
+      previous_trainings: previousTrainings
+    };
+
+    const res = await fetch(`${API_BASE}/employees/register?top_n=5`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      let detail = `HTTP ${res.status}`;
+      try {
+        const err = await res.json();
+        if (Array.isArray(err.detail)) {
+          detail = err.detail.map(d => d.msg || JSON.stringify(d)).join('; ');
+        } else if (err.detail) {
+          detail = err.detail;
+        }
+      } catch (_) { /* body was not JSON - keep the HTTP status */ }
+      showFormError(`The server rejected the submission (${detail}). Please try again.`);
+      return;
+    }
+
+    const data = await res.json();
+    displayResults(data);
+  } catch (err) {
+    console.error('Submit error:', err);
+    showFormError('Something went wrong while submitting: ' + err.message +
+      '  Please tell the developer exactly what this message says.');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalText;
+  }
+});
+
+function displayResults(data) {
+  document.getElementById('wizard').classList.remove('active');
+  document.getElementById('results').classList.add('active');
+
+  document.getElementById('employeeIdDisplay').textContent =
+    `Your allotted employee ID is ${data.employee.employee_id}`;
+
+  const gapCount = data.gaps.length;
+  const designation = data.employee.designation || '';
+  const department = data.employee.department || '';
+
+  document.getElementById('resultsLead').textContent =
+    'On the basis of your current skill portfolio, here are your recommended courses.';
+
+  const sub = document.getElementById('resultsSub');
+  if (gapCount > 0) {
+    const gapsWord = gapCount === 1 ? 'gap' : 'gaps';
+    sub.textContent =
+      `These courses address the ${gapCount} skill ${gapsWord} identified ` +
+      `for your ${designation} role in ${department}.`;
+  } else {
+    sub.textContent =
+      'Your current skills already match your role — these courses will help you go further.';
+  }
+
+  const recsContainer = document.getElementById('recommendationsContainer');
+  recsContainer.innerHTML = '';
+  data.recommendations.forEach(rec => {
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.innerHTML = `
+      <h3>${rec.course_id} - ${rec.course_title}</h3>
+      <p>${rec.description}</p>
+      <div class="course-meta">
+        <span>Duration: ${rec.duration_minutes} min</span>
+        <span>Mode: ${rec.mode}</span>
+        <span>Provider: ${rec.provider}</span>
+        <span>Level: ${rec.target_level}</span>
+      </div>
+    `;
+    recsContainer.appendChild(card);
+  });
+}
+</script>

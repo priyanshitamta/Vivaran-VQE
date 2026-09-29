@@ -1,0 +1,16 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Reports · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Reports</div><h1>Download reports</h1>
+  <p class="subtle" style="font-size:.9rem;">CSV files that open in Excel or Google Sheets. Downloads are recorded in the audit log.</p></div></div>
+<div class="grid-cards">
+  {% for key, (title, desc) in reports.items() %}
+  <div class="ccard">
+    <span class="eyebrow">CSV</span>
+    <h3>{{ title }}</h3>
+    <div class="why">{{ desc }}</div>
+    <div class="foot"><a class="btn btn-primary btn-sm" href="{{ url_for('admin_report_csv', name=key) }}">Download</a></div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

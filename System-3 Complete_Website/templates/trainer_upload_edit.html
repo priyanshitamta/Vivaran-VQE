@@ -1,0 +1,15 @@
+{% extends 'trainer_base.html' %}
+{% block title %}Edit course · Trainer · Vivaran-VQE{% endblock %}
+{% block tcontent %}
+<div class="mt-3"><a href="{{ url_for('trainer_uploads') }}" class="subtle" style="font-size:.9rem;">← My uploaded courses</a></div>
+<div class="page-head" style="margin-top:.75rem;"><div><div class="eyebrow">{{ row.course_id }} · {{ 'Rejected' if row.status == 'rejected' else 'Pending approval' }}</div><h1>Edit “{{ row.title }}”</h1></div></div>
+{% if row.status == 'rejected' and row.review_note %}
+<div class="form-error"><b>Reviewer's reason ({{ row.reviewer_username or 'admin' }}):</b> {{ row.review_note }}</div>
+{% endif %}
+{% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+<form method="post" class="card">
+  {% include '_course_form.html' %}
+  <button class="btn btn-primary" type="submit">{{ 'Save & resubmit for approval' if row.status == 'rejected' else 'Save changes' }}</button>
+  <a class="btn btn-ghost" href="{{ url_for('trainer_uploads') }}">Cancel</a>
+</form>
+{% endblock %}

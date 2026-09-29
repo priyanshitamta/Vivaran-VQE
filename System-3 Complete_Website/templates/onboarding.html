@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Complete your profile · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="card mt-4" style="max-width:560px; margin-left:auto; margin-right:auto;">
+  <div class="eyebrow">One last step</div>
+  <h1 style="font-size:1.4rem; color:var(--brand-deep); margin:.2rem 0 .4rem;">Complete your learner profile</h1>
+  <p class="subtle mb-3" style="font-size:.9rem;">Your designation and field decide which courses we recommend and your learning roadmap.</p>
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+  <form method="post">
+    {% if not user.email %}
+    <div class="field">
+      <label for="email">Government email ID</label>
+      <input type="email" id="email" name="email" placeholder="{{ user.username|lower }}@{{ domain }}" value="{{ request.form.email or '' }}" required>
+      <p class="hint">Must end with @{{ domain }}</p>
+    </div>
+    {% endif %}
+    <div class="field">
+      <label for="role_id">Designation</label>
+      <select id="role_id" name="role_id" required>
+        <option value="">Select your designation…</option>
+        {% for r in roles %}<option value="{{ r.role_id }}" {{ 'selected' if request.form.role_id == r.role_id }}>{{ r.designation }} — {{ r.department }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label for="area">Area of Experience</label>
+      <select id="area" name="area_of_experience" required>
+        <option value="">Select your field…</option>
+        {% for a in areas %}<option value="{{ a }}" {{ 'selected' if request.form.area_of_experience == a }}>{{ a }}</option>{% endfor %}
+      </select>
+    </div>
+    <button class="btn btn-primary" style="width:100%;" type="submit">Build my learning roadmap</button>
+  </form>
+</div>
+{% endblock %}

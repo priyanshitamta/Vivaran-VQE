@@ -1,0 +1,31 @@
+{% extends 'learner_base.html' %}
+{% block title %}My roadmap · Vivaran-VQE{% endblock %}
+{% block content %}
+{% set status_label = {'completed': 'Completed', 'in_progress': 'In progress', 'not_started': 'Not started'} %}
+<div class="page-head"><div><div class="eyebrow">My roadmap</div><h1>Learning Roadmap</h1>
+  <p class="subtle" style="font-size:.9rem;">{{ roadmap|length }} course{{ 's' if roadmap|length != 1 }} for a {{ profile.designation }} in {{ profile.area_of_experience }} · {{ overall }}% complete · click any course to open it</p></div>
+  <form method="post" action="{{ url_for('refresh_roadmap') }}"><input type="hidden" name="next" value="{{ url_for('learner_roadmap') }}"><button class="btn btn-outline btn-sm" type="submit">Refresh recommendations</button></form>
+</div>
+<div class="bar mb-3" style="height:12px;"><span style="width:{{ overall }}%"></span></div>
+{% if roadmap %}
+<div class="roadmap">
+  <div class="rm-end">START</div>
+  {% for r in roadmap %}
+  <div class="rm-arrow"></div>
+  <a class="rm-step {{ r.status }}" href="{{ url_for('course_page', course_id=r.course_id) }}">
+    <div class="num">{% if r.status == 'completed' %}✓{% else %}{{ r.step }}{% endif %}</div>
+    <div>
+      <div class="t">Course {{ r.step }}: {{ r.course_title }}{% if r.added_by_trainer %} <span class="chip pin">📌 Added by your trainer</span>{% endif %}</div>
+      <div class="s">{{ r.reason }}</div>
+    </div>
+    <div class="right">
+      <span class="pill {{ r.status }}">{{ status_label[r.status] }}</span>
+      <div class="bar mt-1 {{ 'done' if r.status == 'completed' }}"><span style="width:{{ r.progress }}%"></span></div>
+    </div>
+  </a>
+  {% endfor %}
+  <div class="rm-arrow"></div>
+  <div class="rm-end finish">COMPLETED</div>
+</div>
+{% else %}<p class="muted-empty">Your roadmap will appear here once courses are recommended.</p>{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{# Shared learner-page macros #}
+{% macro course_card(e, show_score=True) %}
+<a class="ccard" href="{{ url_for('course_page', course_id=e.course_id) }}">
+  <span class="pill {{ e.status }}" style="align-self:flex-start;">{{ {'completed': 'Completed', 'in_progress': 'In progress'}.get(e.status, 'Not started') }}</span>
+  <h3>{{ e.course_title }}</h3>
+  <div class="bar {{ 'done' if e.status == 'completed' }}"><span style="width:{{ e.progress }}%"></span></div>
+  <div class="foot"><span>Progress {{ e.progress }}%</span>
+    <span>{% if show_score and e.best_total %}{{ 'Quiz' if e.status == 'completed' else 'Best quiz' }} {{ e.best_score }}/{{ e.best_total }}{% endif %}</span></div>
+</a>
+{% endmacro %}
+
+{% macro rec_card(r) %}
+<a class="ccard" href="{{ url_for('course_page', course_id=r.course_id) }}">
+  <span class="eyebrow">Step {{ r.step }}{% if r.added_by_trainer %} <span class="chip pin" style="margin:0 0 0 .3rem;">📌 Added by your trainer</span>{% endif %}</span>
+  <h3>{{ r.course_title }}</h3>
+  <div class="why">{{ r.reason }}</div>
+  <div class="foot"><span>Level {{ r.target_level }}{% if r.provider %} · {{ r.provider }}{% endif %}</span><span>Open →</span></div>
+</a>
+{% endmacro %}
+
+{% macro results_table(results) %}
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Course</th><th class="num">Total</th><th class="num">Correct</th><th class="num">Wrong</th><th class="num">Score</th><th class="num">%</th><th>Status</th><th>Date</th><th></th></tr></thead>
+    <tbody>
+    {% for a in results %}
+      <tr><td>{{ a.course_title }}</td><td class="num">{{ a.total }}</td><td class="num">{{ a.score }}</td><td class="num">{{ a.total - a.score }}</td>
+        <td class="num">{{ a.score }}/{{ a.total }}</td><td class="num">{{ "%.0f"|format(a.accuracy or 0) }}%</td>
+        <td>{% if a.passed_bool %}<span class="pill completed">Passed</span>{% else %}<span class="pill failed">Not passed</span>{% endif %}</td>
+        <td class="subtle">{{ (a.finished_at or '')[:10] }}</td><td><a href="{{ url_for('quiz_results', attempt_id=a.id) }}">Review</a></td></tr>
+    {% else %}<tr><td colspan="9" class="muted-empty">No quizzes taken yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}

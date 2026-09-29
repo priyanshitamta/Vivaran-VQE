@@ -1,0 +1,20 @@
+# Python virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment variables / API keys
+.env
+
+# Generated video/audio files
+uploads/
+*.mp4
+*.mp3
+*.wav
+
+# Temporary files
+*.tmpPDFQuizzer/
+results.db
+.DS_Store

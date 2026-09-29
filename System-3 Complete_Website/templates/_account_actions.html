@@ -1,0 +1,13 @@
+{# Deactivate/reactivate + reset password buttons for one user. Needs: u (user dict with id, active), next_url #}
+{% macro account_actions(u, next_url, compact=False) %}
+<div class="acct-actions">
+  <form method="post" action="{{ url_for('admin_set_active', user_id=u.id) }}" data-msg="{{ ('Reactivate ' if not u.active else 'Deactivate ') ~ u.username ~ '?' }}{{ '' if not u.active else (' Their students will be moved to other trainers.' if u.role == 'trainer' else ' They will not be able to log in.') }}" onsubmit="return confirm(this.dataset.msg);">
+    <input type="hidden" name="active" value="{{ '1' if not u.active else '0' }}"><input type="hidden" name="next" value="{{ next_url }}">
+    <button class="btn btn-sm {{ 'btn-ok' if not u.active else 'btn-danger-outline' }}" type="submit">{{ 'Reactivate' if not u.active else 'Deactivate' }}</button>
+  </form>
+  <form method="post" action="{{ url_for('admin_reset_password', user_id=u.id) }}" data-msg="Reset {{ u.username }}'s password? You'll get a temporary password to give them." onsubmit="return confirm(this.dataset.msg);">
+    <input type="hidden" name="next" value="{{ next_url }}">
+    <button class="btn btn-sm btn-outline" type="submit">Reset password</button>
+  </form>
+</div>
+{% endmacro %}

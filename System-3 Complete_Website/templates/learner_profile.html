@@ -1,0 +1,30 @@
+{% extends 'learner_base.html' %}
+{% block title %}My profile · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">My profile</div><h1>{{ user.username }}</h1></div>
+  <a class="btn btn-outline btn-sm" href="{{ url_for('change_password') }}">Change password</a></div>
+<div class="card" style="padding:1.25rem 1.5rem;">
+  <div class="profile-strip">
+    <div><div class="k">Username</div><div class="v">{{ user.username }}</div></div>
+    <div><div class="k">Government email</div><div class="v">{{ user.email or '—' }}</div></div>
+    <div><div class="k">Designation</div><div class="v">{{ profile.designation }}</div><div class="subtle" style="font-size:.8rem;">{{ profile.department }}</div></div>
+    <div><div class="k">Area of Experience</div><div class="v">{{ profile.area_of_experience }}</div></div>
+    <div><div class="k">Member since</div><div class="v">{{ (user.created_at or '')[:10] }}</div></div>
+  </div>
+</div>
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">{{ roadmap|length }}</div><div class="l">Courses in path</div></div>
+  <div class="kpi"><div class="n">{{ completed|length }}</div><div class="l">Completed</div></div>
+  <div class="kpi"><div class="n">{{ overall }}%</div><div class="l">Roadmap progress</div></div>
+  <div class="kpi"><div class="n">{{ results|length }}</div><div class="l">Quizzes taken</div></div>
+</div>
+<div class="section"><h2>My trainer</h2>
+  <div class="panel-card">
+    {% if my_trainer %}
+    <div class="trainer-card"><div class="t-avatar">{{ my_trainer[0]|upper }}</div>
+      <div><b>{{ my_trainer }}</b><div class="sub">{{ trainer_email or '' }}</div></div></div>
+    <div class="mt-1">{% for sid in trainer_specs %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</div>
+    {% else %}<p class="muted-empty">A trainer will be assigned to you soon.</p>{% endif %}
+  </div>
+</div>
+{% endblock %}

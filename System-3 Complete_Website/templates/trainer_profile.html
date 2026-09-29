@@ -1,0 +1,23 @@
+{% extends 'trainer_base.html' %}
+{% from '_skill_picker.html' import skill_picker %}
+{% block title %}My profile · Trainer · Vivaran-VQE{% endblock %}
+{% block tcontent %}
+<div class="page-head"><div><div class="eyebrow">My profile</div><h1>{{ trainer.username }}</h1></div></div>
+{% if message %}<div class="form-ok">{{ message }}</div>{% endif %}
+{% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+<div class="card" style="padding:1.25rem 1.5rem;">
+  <div class="profile-strip">
+    <div><div class="k">Username</div><div class="v">{{ trainer.username }}</div></div>
+    <div><div class="k">Government email</div><div class="v">{{ trainer.email or '—' }}</div></div>
+    <div><div class="k">Students</div><div class="v">{{ students }}</div></div>
+    <div><div class="k">Uploaded courses</div><div class="v">{{ uploads }}</div></div>
+  </div>
+</div>
+<div class="section">
+  <h2>Specialisations <span class="count">used to match new students to you</span></h2>
+  <form method="post" class="card">
+    {{ skill_picker(groups, 'specialisations', tprofile.specialisations) }}
+    <button class="btn btn-primary mt-2" type="submit">Save specialisations</button>
+  </form>
+</div>
+{% endblock %}

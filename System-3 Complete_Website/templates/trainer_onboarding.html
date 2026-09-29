@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% from '_skill_picker.html' import skill_picker %}
+{% block title %}Your specialisations · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="card mt-4" style="max-width:720px; margin-left:auto; margin-right:auto;">
+  <div class="eyebrow">One last step</div>
+  <h1 style="font-size:1.4rem; color:var(--brand-deep); margin:.2rem 0 .4rem;">What do you specialise in?</h1>
+  <p class="subtle mb-3" style="font-size:.9rem;">Pick every skill you can train people in. Students whose roles need these skills are assigned to you.</p>
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+  <form method="post">
+    {{ skill_picker(groups, 'specialisations', selected) }}
+    <button class="btn btn-primary mt-2" style="width:100%;" type="submit">Save and see my students</button>
+  </form>
+</div>
+{% endblock %}

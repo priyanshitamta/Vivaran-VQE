@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Course approvals · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Course approvals</div><h1>Pending uploads</h1>
+  <p class="subtle" style="font-size:.92rem;">Admin can approve or reject any pending course. Courses marked “needs admin” have no other trainer in their field.</p></div></div>
+<div class="filter-tabs">
+  <a href="{{ url_for('admin_approvals', show='all') }}" class="{{ 'active' if show == 'all' }}">All pending<span class="n">{{ pending_courses_n }}</span></a>
+  <a href="{{ url_for('admin_approvals', show='admin') }}" class="{{ 'active' if show == 'admin' }}">Needs admin<span class="n">{{ needs_admin_n }}</span></a>
+</div>
+{% for c in queue %}
+<div class="approval-card" id="c-{{ c.id }}">
+  <div class="ap-head">
+    <div><div class="eyebrow">{{ c.category or 'Course' }} · {{ c.course_id }} · Level {{ c.target_level }}</div>
+      <h2>{{ c.title }}</h2>
+      <div class="subtle" style="font-size:.88rem;">Uploaded by <b>{{ c.trainer_username }}</b> on {{ c.created_at[:10] }}</div></div>
+    {% if c.needs_admin %}<span class="pill failed">No trainer in this field — needs admin</span>{% else %}<span class="pill in_progress">{{ c.reviewers }} eligible trainer{{ 's' if c.reviewers != 1 }}</span>{% endif %}
+  </div>
+  {% if c.description %}<p class="mt-2">{{ c.description }}</p>{% endif %}
+  <div class="ap-grid mt-2">
+    <div>
+      <div class="k">Skills taught</div><div>{% for sid in c.skills %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</div>
+      <div class="k mt-2">Target designations</div><div>{{ c.designations|join(', ') if c.designations else 'All designations' }}</div>
+      <div class="k mt-2">Quiz questions</div><div>{% if c.qcount %}{{ c.qcount }} generated{% else %}<span class="subtle">Not generated yet</span>{% endif %}</div>
+    </div>
+    <div>{% for v in c.video_embeds %}{% if v.embed %}<div class="video-frame"><iframe src="{{ v.embed }}" title="video" allowfullscreen loading="lazy"></iframe></div>{% endif %}<p class="hint mb-1"><a href="{{ v.url }}" target="_blank" rel="noopener">{{ v.url }}</a></p>{% endfor %}</div>
+  </div>
+  <form method="post" action="{{ url_for('admin_review_course', row_id=c.id) }}" class="ap-actions">
+    <label for="note-{{ c.id }}">Comment <span class="subtle">(required if rejecting)</span></label>
+    <textarea id="note-{{ c.id }}" name="note" rows="2"></textarea>
+    <div class="acts"><button class="btn btn-ok" name="action" value="approve" type="submit">Approve &amp; publish</button>
+      <button class="btn btn-danger-outline" name="action" value="reject" type="submit">Reject</button></div>
+  </form>
+</div>
+{% else %}
+<div class="card center"><p><b>No pending courses{{ ' that need admin' if show == 'admin' }}.</b></p></div>
+{% endfor %}
+<div class="section"><h2>Approval history</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Course</th><th>Event</th><th>By</th><th>Comment</th><th>When</th></tr></thead>
+    <tbody>{% for h in history %}
+      <tr><td>{{ h.course_title }}</td>
+        <td><span class="pill {{ {'approved':'completed','rejected':'failed','submitted':'not_started','resubmitted':'in_progress'}[h.action] }}">{{ h.action|title }}</span></td>
+        <td>{{ h.by_username or '—' }}</td><td class="subtle">{{ h.note or '—' }}</td><td class="subtle">{{ h.created_at[:16]|replace('T', ' ') }}</td></tr>
+    {% else %}<tr><td colspan="5" class="muted-empty">No history yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'trainer_base.html' %}
+{% block title %}Verify MCQs · Trainer · Vivaran-VQE{% endblock %}
+{% block tcontent %}
+{% set labels = {'pending': 'Pending', 'approved': 'Approved', 'rejected': 'Rejected', 'flagged': 'Flagged by AI', 'all': 'All'} %}
+<div class="page-head">
+  <div><div class="eyebrow">Verify MCQs</div><h1>Review AI-generated questions</h1>
+    <p class="subtle" style="font-size:.92rem;">Only for courses you uploaded. Learners get quizzes straight away; your review applies from then on —
+      rejected questions are removed from future quizzes and flashcards, edits replace the original.</p></div>
+</div>
+{% if message %}<div class="form-ok">{{ message }}</div>{% endif %}
+{% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+
+<div class="filter-tabs">
+  {% for k in ['pending', 'approved', 'rejected', 'flagged', 'all'] %}
+  <a href="{{ url_for('trainer_verify', f=k, course=only) }}" class="{{ 'active' if f == k }}">{{ labels[k] }}<span class="n">{{ counts[k] }}</span></a>
+  {% endfor %}
+  {% if only %}<a href="{{ url_for('trainer_verify', f=f) }}">✕ Show all courses</a>{% endif %}
+</div>
+
+{% for b in blocks %}
+<div class="section" id="course-{{ b.course.course_id }}">
+  <h2>{{ b.course.title }} <span class="count">{{ b.course.course_id }} · {{ b.course.videos|length }} video{{ 's' if b.course.videos|length != 1 }}</span></h2>
+
+  {% if b.job.status == 'generating' %}
+    <div class="notice" data-generating="{{ b.course.course_id }}"><span class="spinner"></span> Generating questions from the course video… this page refreshes when they're ready.</div>
+  {% elif b.job.status == 'error' %}
+    <div class="form-error"><b>Generation failed.</b> {{ b.job.error }}</div>
+  {% endif %}
+
+  {% if not b.sets %}
+    {% if b.job.status != 'generating' %}
+    <div class="card" style="padding:1.1rem 1.25rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+      <div><b>No questions yet.</b><div class="subtle" style="font-size:.88rem;">They are created the first time a learner takes this quiz — or generate them now to review first.</div></div>
+      <form method="post" action="{{ url_for('trainer_verify_generate', course_id=b.course.course_id) }}"><button class="btn btn-primary btn-sm" type="submit">Generate questions now</button></form>
+    </div>
+    {% endif %}
+  {% endif %}
+
+  {% for set in b.sets %}
+  <div id="set-{{ set.bank.id }}">
+    <div class="set-head">
+      <div class="subtle" style="font-size:.88rem;">From video: <a href="{{ set.bank.video_url }}" target="_blank" rel="noopener">{{ set.bank.video_url }}</a>
+        · {{ set.approved }}/{{ set.total }} approved{% if set.bank.demo %} · <b>demo questions</b>{% endif %}</div>
+      <div style="display:flex; gap:.5rem;">
+        {% if set.pending %}
+        <form method="post" action="{{ url_for('trainer_verify_approve_all', bank_id=set.bank.id) }}">
+          <input type="hidden" name="f" value="{{ f }}"><input type="hidden" name="course" value="{{ only or '' }}">
+          <button class="btn btn-ok btn-sm" type="submit">Approve all {{ set.pending }} pending</button></form>
+        {% endif %}
+        <form method="post" action="{{ url_for('trainer_verify_generate', course_id=b.course.course_id) }}" data-msg="Replace these questions with a freshly generated set?" onsubmit="return confirm(this.dataset.msg);">
+          <button class="btn btn-outline btn-sm" type="submit">Regenerate</button></form>
+      </div>
+    </div>
+
+    {% for it in set.questions %}
+    {% set q = it.q %}
+    <div class="vq {{ it.status }}" id="q-{{ set.bank.id }}-{{ it.idx }}">
+      <div class="meta mb-1">
+        <b>Q{{ it.idx + 1 }}</b>
+        <span class="pill {{ {'approved':'completed','rejected':'failed','pending':'in_progress'}[it.status] }}">{{ labels[it.status] }}{% if q.review and q.review.edited %} · edited{% endif %}</span>
+        {% set ai = (q.verification_status or 'unverified')|lower %}
+        <span class="pill {{ 'verified' if ai == 'verified' else ('flagged' if ai == 'flagged' else 'unverified') }}">AI check: {{ ai }}</span>
+        {% if q.review and q.review.by %}<span>by {{ q.review.by }} · {{ (q.review.at or '')[:10] }}</span>{% endif %}
+      </div>
+      <div class="qt">{{ q.question }}</div>
+      <ol>{% for o in q.options %}<li class="{{ 'correct' if o == q.answer }}">{{ o }}{% if o == q.answer %} ✓{% endif %}</li>{% endfor %}</ol>
+      {% if q.explanation %}<div class="subtle" style="font-size:.88rem;"><b>Explanation:</b> {{ q.explanation }}</div>{% endif %}
+      {% if q.original %}<div class="hint">Original question: “{{ q.original.question }}”</div>{% endif %}
+
+      <div class="acts">
+        {% for action, label, cls in [('approve', 'Approve', 'btn-ok'), ('reject', 'Reject', 'btn-danger-outline'), ('reset', 'Mark pending', 'btn-ghost')] %}
+          {% if not (action == 'approve' and it.status == 'approved') and not (action == 'reject' and it.status == 'rejected') and not (action == 'reset' and it.status == 'pending') %}
+          <form method="post" action="{{ url_for('trainer_verify_question', bank_id=set.bank.id, idx=it.idx) }}">
+            <input type="hidden" name="action" value="{{ action }}"><input type="hidden" name="f" value="{{ f }}"><input type="hidden" name="course" value="{{ only or '' }}">
+            <button class="btn btn-sm {{ cls }}" type="submit">{{ label }}</button></form>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <details class="mt-1">
+        <summary>Edit this question</summary>
+        <form method="post" action="{{ url_for('trainer_verify_question', bank_id=set.bank.id, idx=it.idx) }}" class="edit-grid">
+          <input type="hidden" name="action" value="edit"><input type="hidden" name="f" value="{{ f }}"><input type="hidden" name="course" value="{{ only or '' }}">
+          <label>Question<textarea name="question" rows="2" required>{{ q.question }}</textarea></label>
+          <label style="margin-bottom:0;">Options <span class="subtle">(select the correct one)</span></label>
+          {% for i in range(4) %}
+          <div class="opt-row">
+            <input type="radio" name="answer_index" value="{{ i }}" {{ 'checked' if q.options|length > i and q.options[i] == q.answer }} aria-label="Option {{ i + 1 }} is correct" style="width:auto;">
+            <input name="option_{{ i }}" value="{{ q.options[i] if q.options|length > i else '' }}" placeholder="Option {{ 'ABCD'[i] }}">
+          </div>
+          {% endfor %}
+          <label>Explanation<textarea name="explanation" rows="2">{{ q.explanation or '' }}</textarea></label>
+          <div><button class="btn btn-primary btn-sm" type="submit">Save &amp; approve</button></div>
+        </form>
+      </details>
+    </div>
+    {% else %}
+      <p class="muted-empty" style="font-size:.9rem;">No {{ labels[f]|lower }} questions in this set.</p>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card center mt-3">
+  <p><b>You haven't uploaded any courses yet.</b></p>
+  <p class="subtle mt-1" style="font-size:.9rem;">You can verify the AI-generated questions of courses you upload.</p>
+  <a class="btn btn-primary mt-2" href="{{ url_for('trainer_uploads') }}#upload">Upload a course</a>
+</div>
+{% endfor %}
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var pending = document.querySelectorAll('[data-generating]');
+    if (!pending.length) return;
+    var ids = Array.prototype.map.call(pending, function (el) { return el.getAttribute('data-generating'); });
+    var t = setInterval(function () {
+      Promise.all(ids.map(function (id) {
+        return fetch('/trainer/verify/' + encodeURIComponent(id) + '/status.json').then(function (r) { return r.json(); });
+      })).then(function (all) {
+        if (all.some(function (s) { return s.status !== 'generating'; })) { clearInterval(t); location.reload(); }
+      }).catch(function () {});
+    }, 3000);
+  })();
+</script>
+{% endblock %}

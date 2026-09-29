@@ -1,0 +1,51 @@
+{% extends 'trainer_base.html' %}
+{% block title %}Uploaded courses · Trainer · Vivaran-VQE{% endblock %}
+{% block tcontent %}
+<div class="page-head"><div><div class="eyebrow">Uploaded courses</div><h1>My uploaded courses</h1></div></div>
+{% if message %}<div class="form-ok">{{ message }}</div>{% endif %}
+
+{% set st_label = {'pending': '🟡 Pending approval', 'approved': '🟢 Approved', 'rejected': '🔴 Rejected'} %}
+{% set st_pill = {'pending': 'in_progress', 'approved': 'completed', 'rejected': 'failed'} %}
+{% if mine %}
+<div class="upload-list">
+  {% for c in mine %}
+  <div class="upload-row {{ c.status }}">
+    <div class="ur-main">
+      <div class="eyebrow">{{ c.category or 'Course' }} · {{ c.course_id }} · Level {{ c.target_level }}</div>
+      <h3><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a></h3>
+      <div class="mt-1">{% for sid in c.skills %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</div>
+      {% if c.status == 'rejected' and c.review_note %}
+      <div class="form-error mt-1" style="margin-bottom:0;"><b>Reviewer's reason ({{ c.reviewer_username or 'admin' }}):</b> {{ c.review_note }}</div>
+      {% elif c.status == 'approved' and c.reviewer_username %}
+      <div class="subtle mt-1" style="font-size:.85rem;">Approved by <b>{{ c.reviewer_username }}</b> on {{ (c.reviewed_at or '')[:10] }}{% if c.review_note %} — “{{ c.review_note }}”{% endif %}</div>
+      {% elif c.status == 'pending' %}
+      <div class="subtle mt-1" style="font-size:.85rem;">{% if c.needs_admin %}No other trainer shares these skills yet, so the <b>admin</b> will review it.{% else %}Waiting for a trainer in a similar field to review it.{% endif %}</div>
+      {% endif %}
+      {% if c.history|length > 1 %}
+      <details class="mt-1"><summary class="subtle" style="font-size:.82rem; cursor:pointer;">Review history ({{ c.history|length }})</summary>
+        <ul class="mini-list mt-1">{% for h in c.history %}<li><span><b>{{ h.action|title }}</b> by {{ h.by_username or '—' }}{% if h.note %} — “{{ h.note }}”{% endif %}</span><span class="sub">{{ h.created_at[:16]|replace('T', ' ') }}</span></li>{% endfor %}</ul>
+      </details>
+      {% endif %}
+    </div>
+    <div class="ur-side">
+      <span class="pill {{ st_pill[c.status] }}">{{ st_label[c.status] }}</span>
+      <a class="btn btn-outline btn-sm" href="{{ url_for('trainer_verify', f='all', course=c.course_id) }}">Questions</a>
+      {% if c.status != 'approved' %}
+      <a class="btn btn-primary btn-sm" href="{{ url_for('trainer_upload_edit', row_id=c.id) }}">{{ 'Edit & resubmit' if c.status == 'rejected' else 'Edit' }}</a>
+      {% endif %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}<p class="muted-empty">You haven't uploaded any courses yet.</p>{% endif %}
+
+<div class="section" id="upload">
+  <h2>Upload a course</h2>
+  {% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+  <form method="post" action="{{ url_for('trainer_uploads') }}#upload" class="card">
+    {% include '_course_form.html' %}
+    <p class="notice mb-2">New courses are <b>reviewed by another trainer in a similar field</b> (or the admin if none) before learners can see them. You can generate and verify the quiz questions while you wait.</p>
+    <button class="btn btn-primary" type="submit">Submit for approval</button>
+  </form>
+</div>
+{% endblock %}

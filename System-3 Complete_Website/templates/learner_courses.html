@@ -1,0 +1,15 @@
+{% extends 'learner_base.html' %}
+{% from '_learner_bits.html' import course_card %}
+{% block title %}My courses · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">My courses</div><h1>My learning</h1></div></div>
+<div class="filter-tabs">
+  <a href="{{ url_for('learner_courses', tab='in_progress') }}" class="{{ 'active' if tab != 'completed' }}">In progress<span class="n">{{ in_progress|length }}</span></a>
+  <a href="{{ url_for('learner_courses', tab='completed') }}" class="{{ 'active' if tab == 'completed' }}">Completed<span class="n">{{ completed|length }}</span></a>
+</div>
+{% set items = completed if tab == 'completed' else in_progress %}
+{% if items %}
+<div class="grid-cards">{% for e in items %}{{ course_card(e) }}{% endfor %}</div>
+{% elif tab == 'completed' %}<p class="muted-empty">No completed courses yet — pass a course quiz to complete it.</p>
+{% else %}<p class="muted-empty">Nothing in progress. <a href="{{ url_for('learner_recommended') }}">Pick a recommended course</a> to start.</p>{% endif %}
+{% endblock %}

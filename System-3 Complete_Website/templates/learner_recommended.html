@@ -1,0 +1,14 @@
+{% extends 'learner_base.html' %}
+{% from '_learner_bits.html' import rec_card %}
+{% block title %}Recommended · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">Recommended for you</div><h1>Recommended courses: {{ recommended|length }}</h1>
+  <p class="subtle" style="font-size:.9rem;">Picked for a <b>{{ profile.designation }}</b> ({{ profile.department }}) with experience in <b>{{ profile.area_of_experience }}</b>, skipping courses you've completed. <a href="{{ url_for('learner_skills') }}">See the skill gaps behind these picks</a>.</p></div>
+  <form method="post" action="{{ url_for('refresh_roadmap') }}"><input type="hidden" name="next" value="{{ url_for('learner_recommended') }}"><button class="btn btn-outline btn-sm" type="submit">Refresh recommendations</button></form>
+</div>
+{% if recommended %}
+<div class="grid-cards">{% for r in recommended %}{{ rec_card(r) }}{% endfor %}</div>
+{% elif roadmap %}<p class="muted-empty">You've started every course on your current path — keep going on <a href="{{ url_for('learner_roadmap') }}">your roadmap</a>, or refresh for new picks.</p>
+{% else %}<p class="muted-empty">No matching courses found for your profile yet.</p>{% endif %}
+<p class="hint mt-3">Course catalogue: {{ catalogue_source }}.</p>
+{% endblock %}

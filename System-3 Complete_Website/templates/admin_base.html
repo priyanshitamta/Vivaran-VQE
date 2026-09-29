@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{# Admin layout: same collapsible sidebar as the trainer workspace. Pages fill `acontent`. #}
+{% block main %}
+{% set nav = [
+  ('overview', url_for('admin_dashboard'), 'Overview', 'M3 12l9-8 9 8M5 10v10h5v-6h4v6h5V10'),
+  ('learners', url_for('admin_learners'), 'Learners', 'M16 11a4 4 0 10-8 0 4 4 0 008 0zM4 21a8 8 0 0116 0'),
+  ('trainers', url_for('admin_trainers'), 'Trainers', 'M12 3l9 4-9 4-9-4 9-4zm-6 6v5c0 2 3 4 6 4s6-2 6-4V9'),
+  ('approvals', url_for('admin_approvals'), 'Course approvals', 'M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11'),
+  ('gaps', url_for('admin_skill_gaps'), 'Skill-gap analytics', 'M4 20V10M10 20V4M16 20v-7M22 20H2'),
+  ('courses', url_for('admin_courses'), 'Courses', 'M4 5a2 2 0 012-2h12v16H6a2 2 0 00-2 2V5zm0 14a2 2 0 012-2h12'),
+  ('quality', url_for('admin_quality'), 'Quiz quality', 'M9 12l2 2 4-4M12 3l7 4v5c0 4.5-3 8-7 9-4-1-7-4.5-7-9V7l7-4z'),
+  ('reports', url_for('admin_reports'), 'Reports', 'M12 4v12m0 0l-5-5m5 5l5-5M4 20h16'),
+  ('audit', url_for('admin_audit'), 'Audit log', 'M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z'),
+  ('staff', url_for('admin_staff'), 'Staff accounts', 'M15 7a4 4 0 11-8 0 4 4 0 018 0zM3 21a8 8 0 0113-6.3M19 14v6m-3-3h6'),
+] %}
+<div class="t-shell" id="tShell">
+  <script>try { if (localStorage.getItem('vivaran.sidebar') === 'closed') document.getElementById('tShell').classList.add('collapsed'); } catch (e) {}</script>
+  <aside class="t-sidebar" aria-label="Admin navigation">
+    <button type="button" class="t-toggle" id="tToggle" aria-label="Collapse or expand sidebar" title="Collapse / expand">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="t-who">
+      <div class="t-avatar">{{ me.username[0]|upper }}</div>
+      <div class="t-label"><b>{{ me.username }}</b><span>{{ 'Main admin' if me.is_primary else 'Admin' }}</span></div>
+    </div>
+    <nav class="t-nav">
+      {% for key, href, label, icon in nav %}
+      <a href="{{ href }}" class="{{ 'active' if active == key }}" title="{{ label }}">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ icon }}"/></svg>
+        <span class="t-label">{{ label }}</span>
+        {% if key == 'approvals' and pending_courses_n %}<span class="badge" title="{{ pending_courses_n }} pending ({{ needs_admin_n }} need admin)">{{ pending_courses_n }}</span>{% endif %}
+      </a>
+      {% endfor %}
+      <div class="t-sep"></div>
+      <a href="{{ url_for('recommendation') }}" title="Assess an employee (original System 1 form)">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8M20 12v7a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2h9"/></svg>
+        <span class="t-label">Assess an employee</span>
+      </a>
+    </nav>
+  </aside>
+  <main class="t-main">
+    {% if message %}<div class="form-ok mt-3">{{ message }}</div>{% endif %}
+    {% if error %}<div class="form-error mt-3">{{ error }}</div>{% endif %}
+    {% block acontent %}{% endblock %}
+    <div class="mb-4"></div>
+  </main>
+</div>
+<script>
+  (function () {
+    var shell = document.getElementById('tShell');
+    document.getElementById('tToggle').addEventListener('click', function () {
+      shell.classList.toggle('collapsed');
+      try { localStorage.setItem('vivaran.sidebar', shell.classList.contains('collapsed') ? 'closed' : 'open'); } catch (e) {}
+    });
+  })();
+</script>
+{% endblock %}

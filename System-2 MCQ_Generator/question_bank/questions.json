@@ -1,0 +1,62 @@
+[[
+    {
+        "id": 1,
+        "question": "What is Artificial Intelligence?",
+        "options": {
+            "a": "A field of computing",
+            "b": "A type of database",
+            "c": "An operating system",
+            "d": "A programming language"
+        },
+        "answer": "a",
+        "explanation": "Artificial Intelligence is a field of computing that focuses on creating systems capable of performing tasks that normally require human intelligence."
+    },
+    {
+        "id": 2,
+        "question": "What is Machine Learning?",
+        "options": {
+            "a": "A hardware component",
+            "b": "A subset of Artificial Intelligence",
+            "c": "A database system",
+            "d": "A web browser"
+        },
+        "answer": "b",
+        "explanation": "Machine Learning is a subset of Artificial Intelligence where systems learn patterns from data."
+    },
+    {
+        "id": 3,
+        "question": "Which of these is commonly used in Machine Learning?",
+        "options": {
+            "a": "Training data",
+            "b": "HTML tags only",
+            "c": "Computer cables",
+            "d": "Printers"
+        },
+        "answer": "a",
+        "explanation": "Training data is used to teach a Machine Learning model to identify patterns."
+    },
+    {
+        "id": 4,
+        "question": "What is a dataset?",
+        "options": {
+            "a": "A collection of data",
+            "b": "A computer monitor",
+            "c": "A programming keyboard",
+            "d": "A network cable"
+        },
+        "answer": "a",
+        "explanation": "A dataset is a collection of related data used for analysis, training, testing, or other computational tasks."
+    },
+    {
+        "id": 5,
+        "question": "What is the purpose of a quiz in a learning platform?",
+        "options": {
+            "a": "To test understanding",
+            "b": "To replace the course",
+            "c": "To delete course content",
+            "d": "To install software"
+        },
+        "answer": "a",
+        "explanation": "A quiz helps assess how well a learner understands the material."
+    }
+]]

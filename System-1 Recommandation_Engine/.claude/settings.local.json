@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd *)",
+      "Bash(echo *)",
+      "PowerShell(python -c \"import fastapi, uvicorn, pandas, pydantic; print\\('system python has deps:', fastapi.__version__, pandas.__version__\\)\"; Write-Output \"---VENV PIP LIST---\"; & \".\\\\.venv\\\\Scripts\\\\python.exe\" -m pip list 2>$null | Select-Object -First 20)",
+      "PowerShell(python -c \"from fastapi.testclient import TestClient; from app.main import create_app; app = create_app\\(enable_embeddings=False\\); c = TestClient\\(app\\); r = c.get\\('/'\\); print\\('GET / ->', r.status_code, r.headers.get\\('content-type'\\)\\); print\\('body starts:', repr\\(r.text[:50]\\)\\); h = c.get\\('/health'\\); print\\('GET /health ->', h.status_code, h.json\\(\\)['status']\\)\")",
+      "PowerShell(python -m pytest -q 2>$null | Select-Object -Last 15)",
+      "PowerShell($before = try { \\(Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/health\" -TimeoutSec 1\\).StatusCode } catch { \"down\" }; Write-Output \"health before launch: $before\"; cmd /c \"start.bat\"; Write-Output \"launcher exited\")",
+      "PowerShell(cmd /c \".\\\\start.bat\"; Write-Output \"launcher exited with $LASTEXITCODE\")",
+      "PowerShell($h = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/health\" -TimeoutSec 5; Write-Output \"health: $\\($h.StatusCode\\) $\\($h.Content\\)\"; $r = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/\" -TimeoutSec 5; Write-Output \"root: $\\($r.StatusCode\\) content-type=$\\($r.Headers['Content-Type']\\)\"; Write-Output \"starts-with: $\\($r.Content.Substring\\(0,60\\)\\)\")",
+      "PowerShell(python -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
+      "PowerShell($ok = $false; for \\($i = 0; $i -lt 15; $i++\\) { try { $h = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/health\" -TimeoutSec 2; $ok = $true; break } catch { Start-Sleep -Milliseconds 700 } }; if \\(-not $ok\\) { Write-Output \"SERVER NOT UP\"; exit 1 }; Write-Output \"health: $\\($h.StatusCode\\) $\\($h.Content\\)\"; $r = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/\" -TimeoutSec 5; Write-Output \"root: $\\($r.StatusCode\\) type=$\\($r.Headers['Content-Type']\\)\"; Write-Output \"first-chars: $\\($r.Content.Substring\\(0,80\\)\\)\")",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { $conn | ForEach-Object { $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue; Write-Output \"PID $\\($_.OwningProcess\\) -> $\\($p.ProcessName\\) $\\($p.Path\\)\" } } else { Write-Output \"nothing listening on 8000\" })",
+      "PowerShell(try { $h = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/health\" -TimeoutSec 5; Write-Output \"health: $\\($h.StatusCode\\) $\\($h.Content\\)\" } catch { Write-Output \"health: FAILED - $\\($_.Exception.Message\\)\" }; try { $r = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/\" -TimeoutSec 5; Write-Output \"root: $\\($r.StatusCode\\) type=$\\($r.Headers['Content-Type']\\)\"; Write-Output \"first-chars: $\\($r.Content.Substring\\(0,60\\)\\)\" } catch { Write-Output \"root: FAILED - $\\($_.Exception.Message\\)\" })",
+      "PowerShell(python -m pytest -q 2>$null | Select-Object -Last 8)",
+      "PowerShell(python -c \"from fastapi.testclient import TestClient; from app.main import create_app; app = create_app\\(enable_embeddings=False\\); c = TestClient\\(app\\); r = c.get\\('/'\\); print\\('GET / ->', r.status_code, r.headers.get\\('content-type'\\), '| serves index.html:', '<title>iGOT Recommendation Engine</title>' in r.text\\); h = c.get\\('/health'\\); print\\('GET /health ->', h.status_code, h.json\\(\\)['status']\\)\" 2>$null)",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { Write-Output \"port 8000 busy \\(PID $\\($conn.OwningProcess\\)\\)\" } else { Write-Output \"port 8000 free\" })",
+      "PowerShell($ok = $false; for \\($i = 0; $i -lt 25; $i++\\) { try { $h = Invoke-WebRequest -UseBasicParsing -Uri \"http://127.0.0.1:8000/health\" -TimeoutSec 2; $ok = $true; break } catch { Start-Sleep -Milliseconds 500 } }; if \\($ok\\) { Write-Output \"SERVER IS LIVE -> /health returns $\\($h.StatusCode\\): $\\($h.Content\\)\" } else { Write-Output \"not up yet\" })",
+      "PowerShell(Start-Sleep -Milliseconds 800; $conn = Get-NetTCPConnection -LocalPort 8000 -State Listen -ErrorAction SilentlyContinue; if \\($conn\\) { Write-Output \"port 8000 STILL busy \\(PID $\\($conn.OwningProcess\\)\\)\" } else { Write-Output \"port 8000 is FREE now\" })"
+    ]
+  }
+}

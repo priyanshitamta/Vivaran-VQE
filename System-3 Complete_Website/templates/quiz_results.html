@@ -1,0 +1,89 @@
+{% extends 'learner_base.html' if current_role == 'learner' else 'base.html' %}
+{% block title %}Quiz Results · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="center mb-1">
+  <div class="section-title" style="margin:.75rem 0 .25rem;">Quiz Result</div>
+  <h1 style="font-size:1.35rem; color:var(--brand-deep);">{{ attempt.course_title }}</h1>
+  <p class="subtle" style="font-size:.9rem;">{{ attempt.course_id }}</p>
+</div>
+
+<div class="card center mb-2" style="padding:1.1rem;">
+  <div style="font-size:1.15rem; font-weight:800; color:var(--brand-deep);">Quiz Completed</div>
+  <div class="mt-1">Status:
+    {% if passed %}<span class="pill completed" style="font-size:.9rem;">Passed</span>
+    {% else %}<span class="pill failed" style="font-size:.9rem;">Not passed</span>{% endif %}
+    <span class="subtle" style="font-size:.85rem;"> · pass mark {{ threshold|round|int }}%</span>
+  </div>
+  {% if enrollment %}
+  <div class="subtle mt-1" style="font-size:.9rem;">Course status: <b>{{ enrollment.status|replace('_',' ')|title }}</b> · progress {{ enrollment.progress }}%</div>
+  {% endif %}
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="v">{{ review.total }}</div>
+    <div class="l">Total questions</div>
+  </div>
+  <div class="stat">
+    <div class="v {{ 'good' if review.score == review.total else ('bad' if review.score == 0 else '') }}">{{ review.score }}/{{ review.total }}</div>
+    <div class="l">Score</div>
+  </div>
+  <div class="stat">
+    <div class="v {{ 'good' if review.accuracy >= 60 else 'bad' }}">{{ "%.1f"|format(review.accuracy) }}%</div>
+    <div class="l">Percentage</div>
+  </div>
+  <div class="stat">
+    <div class="v good">+{{ review.score }}</div>
+    <div class="l">Correct answers</div>
+  </div>
+  <div class="stat">
+    <div class="v bad">−{{ review.total - review.score }}</div>
+    <div class="l">Wrong answers</div>
+  </div>
+</div>
+
+{% if notice %}<div class="notice mb-3" style="font-size:.9rem;">{{ notice }}</div>{% endif %}
+
+<div class="panel review" style="padding:1.5rem;">
+  <h2 style="font-size:1rem; margin-bottom:.5rem;">Question review</h2>
+  {% for d in review.details %}
+  <div class="item">
+    <p style="font-weight:600; margin-bottom:.5rem;">
+      <span class="qid">Q{{ loop.index }}.</span>{{ d.question }}
+    </p>
+
+    {% if d.is_correct %}
+      <p style="font-size:.95rem;"><span class="user-a ok">✓ Correct</span> — {{ d.selected_answer }}</p>
+    {% else %}
+      {% if d.selected_answer %}
+      <p style="font-size:.95rem;"><span class="user-a">✗ Your answer</span> — {{ d.selected_answer }}</p>
+      {% endif %}
+      <p style="font-size:.95rem;"><span class="user-a ok">✓ Correct answer</span> — {{ d.correct_answer }}</p>
+    {% endif %}
+
+    {% set vstatus = d.verification_status or 'unverified' %}
+    <p class="mt-1" style="font-size:.85rem;">
+      {% if vstatus == 'verified' %}<span class="pill verified">verified</span>
+      {% elif vstatus == 'flagged' %}<span class="pill flagged">flagged</span>
+      {% else %}<span class="pill unverified">unverified</span>{% endif %}
+    </p>
+
+    {% if d.explanation %}
+    <p class="subtle" style="font-size:.88rem; margin-top:.4rem;"><b>Explanation:</b> {{ d.explanation }}</p>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+<div class="center mt-4 mb-4">
+  {% if is_learner %}
+  <a class="btn btn-primary" href="{{ url_for('learner_dashboard') }}">Back to my dashboard</a>
+  <a class="btn btn-outline" href="{{ url_for('course_page', course_id=attempt.course_id) }}">Back to the course</a>
+  {% else %}
+  <a class="btn btn-primary" href="{{ url_for('submission_results', submission_id=attempt.submission_id) }}">
+    Back to recommended courses
+  </a>
+  <a class="btn btn-outline" href="{{ url_for('recommendation') }}">Recommend another employee</a>
+  {% endif %}
+</div>
+{% endblock %}

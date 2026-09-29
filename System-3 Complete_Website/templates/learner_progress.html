@@ -1,0 +1,109 @@
+{% extends 'learner_base.html' %}
+{% block title %}My progress · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="hero-banner">
+  <div class="hb-row">
+    <div class="streak-big {{ 'cold' if not p.streak }}"><div class="flame">🔥</div><b>{{ p.streak }}</b><span>day streak</span></div>
+    <div>
+      <div class="eyebrow">My progress</div>
+      <h1>Level {{ p.level.number }} · {{ p.level.name }}</h1>
+      <p>{{ p.xp }} XP{% if p.level.next_name %} · {{ p.level.to_next }} XP to Level {{ p.level.number + 1 }} ({{ p.level.next_name }}){% else %} · top level reached{% endif %}</p>
+      <div class="xp-bar"><span style="width:{{ p.level.pct }}%"></span></div>
+      <p style="font-size:.88rem; margin-top:.5rem;">
+        {% if p.active_today %}✅ You've kept your streak alive today.
+        {% elif p.streak %}Finish a video lecture or take a quiz today to keep your {{ p.streak }}-day streak going.
+        {% else %}Finish a video lecture or take a quiz to start a streak.{% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div class="kpis" style="margin-top:1.25rem;">
+  <div class="kpi"><div class="n">🔥 {{ p.streak }}</div><div class="l">Current streak (days)</div></div>
+  <div class="kpi"><div class="n">{{ p.longest }}</div><div class="l">Longest streak</div></div>
+  <div class="kpi"><div class="n">{{ p.stats.completed }}</div><div class="l">Courses completed</div></div>
+  <div class="kpi"><div class="n">{{ p.stats.passed }}</div><div class="l">Quizzes passed</div></div>
+  <div class="kpi"><div class="n">{{ p.badges_earned }}/{{ p.badges|length }}</div><div class="l">Badges earned</div></div>
+</div>
+
+<div class="dash-grid">
+  <div>
+    <div class="section">
+      <h2>Activity <span class="count">last 12 weeks · {{ p.active_days }} active day{{ 's' if p.active_days != 1 }}</span></h2>
+      <div class="panel-card">
+        <div class="cal">
+          <div class="cal-days"><span>Mon</span><span></span><span>Wed</span><span></span><span>Fri</span><span></span><span>Sun</span></div>
+          {% for wk in p.weeks %}
+          <div class="cal-col">
+            {% for d in wk %}<span class="cal-cell l{{ d.lvl }} {{ 'future' if d.future }}" title="{{ d.date }}: {{ d.n }} activit{{ 'y' if d.n == 1 else 'ies' }}"></span>{% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+        <div class="legend" style="justify-content:flex-end;">Less <span class="cal-cell l0"></span><span class="cal-cell l1"></span><span class="cal-cell l2"></span><span class="cal-cell l3"></span><span class="cal-cell l4"></span> More</div>
+        <p class="hint">A day counts toward your streak when you finish a video lecture or take a quiz.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Badges <span class="count">{{ p.badges_earned }} of {{ p.badges|length }} earned</span></h2>
+      <div class="badge-grid">
+        {% for b in p.badges %}
+        <div class="badge-card {{ 'earned' if b.earned else 'locked' }}" title="{{ b.desc }}">
+          <div class="bi">{{ b.icon }}</div>
+          <b>{{ b.name }}</b>
+          <span>{{ b.desc }}</span>
+          <em>{% if b.earned %}Earned{% if b.date %} {{ b.date }}{% endif %}{% else %}Locked{% endif %}</em>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Learning stats</h2>
+      <div class="kpis kpis-4" style="margin-top:0;">
+        <div class="kpi"><div class="n">{{ p.stats.videos }}</div><div class="l">Videos watched</div></div>
+        <div class="kpi"><div class="n">{{ p.stats.quizzes }}</div><div class="l">Quizzes taken</div></div>
+        <div class="kpi"><div class="n">{{ p.stats.perfect }}</div><div class="l">Perfect scores</div></div>
+        <div class="kpi"><div class="n">{{ (p.stats.avg|string + '%') if p.stats.avg is not none else '—' }}</div><div class="l">Average score</div></div>
+        <div class="kpi"><div class="n">{{ p.stats.cards }}</div><div class="l">Flashcards mastered</div></div>
+        <div class="kpi"><div class="n">{{ overall }}%</div><div class="l">Roadmap done</div></div>
+        <div class="kpi"><div class="n">{{ p.total_days }}</div><div class="l">Total active days</div></div>
+        <div class="kpi"><div class="n">{{ p.xp }}</div><div class="l">Total XP</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:2rem;">
+    <div class="panel-card accent">
+      <h3>Recent achievements</h3>
+      {% if p.timeline %}
+      <ul class="mini-list">
+        {% for t in p.timeline %}<li><div><span style="margin-right:.35rem;">{{ t.icon }}</span>{{ t.text }}<div class="sub">{{ t.date }}</div></div></li>{% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">Your achievements will show up here.</p>{% endif %}
+    </div>
+
+    <div class="panel-card">
+      <h3>Where your XP came from</h3>
+      <ul class="mini-list">
+        {% for k, v in p.xp_parts.items() %}<li><span>{{ k }}</span><b>{{ v }}</b></li>{% endfor %}
+        <li><span><b>Total</b></span><b style="color:var(--link);">{{ p.xp }} XP</b></li>
+      </ul>
+    </div>
+
+    <div class="panel-card">
+      <h3>How to earn XP</h3>
+      <ul class="mini-list">
+        <li><span>Start a course</span><b>+{{ xp_rules.start }}</b></li>
+        <li><span>Watch the course video</span><b>+{{ xp_rules.video }}</b></li>
+        <li><span>Take a quiz <span class="sub">(up to 3 per course)</span></span><b>+{{ xp_rules.quiz }}</b></li>
+        <li><span>Pass a course quiz</span><b>+{{ xp_rules.pass }}</b></li>
+        <li><span>Score 100% <span class="sub">(bonus)</span></span><b>+{{ xp_rules.perfect }}</b></li>
+        <li><span>Complete a course</span><b>+{{ xp_rules.complete }}</b></li>
+        <li><span>Master a flashcard</span><b>+{{ xp_rules.card }}</b></li>
+      </ul>
+      <p class="hint mt-1">Levels: {% for need, name in levels %}{{ name }} ({{ need }}){{ ' · ' if not loop.last }}{% endfor %}</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

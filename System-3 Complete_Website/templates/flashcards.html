@@ -1,0 +1,122 @@
+{% extends 'learner_base.html' if current_role == 'learner' else 'base.html' %}
+{% block title %}Flashcards · {{ title }} · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="mt-3">
+  <a href="{{ url_for('course_page', course_id=course_id) }}" class="subtle" style="font-size:.9rem;">← Back to the course</a>
+</div>
+
+<div class="page-head" style="margin-top:1rem;">
+  <div>
+    <div class="eyebrow">Flashcards</div>
+    <h1>{{ title }}</h1>
+  </div>
+  {% if cards %}
+  <div class="fc-mastery"><b id="fcMastered">{{ mastered }}</b>/{{ cards|length }} mastered</div>
+  {% endif %}
+</div>
+
+{% if not cards %}
+  <div class="card center">
+    <div style="font-size:2rem;">🔒</div>
+    <p class="mt-1"><b>Take the quiz to unlock flashcards.</b></p>
+    <p class="subtle mt-1" style="font-size:.9rem;">Flashcards are built from the questions in your quizzes for this course.</p>
+    <a class="btn btn-primary mt-3" href="{{ url_for('course_page', course_id=course_id) }}#quiz">Go to the quiz</a>
+  </div>
+{% else %}
+  <div class="bar mb-2"><span id="fcBar" style="width:{{ (mastered / cards|length * 100)|round }}%"></span></div>
+
+  <div class="fc-toolbar">
+    <span class="subtle" id="fcCounter">Card 1 of {{ cards|length }}</span>
+    <span id="fcTag"></span>
+    <button type="button" class="btn btn-ghost btn-sm" id="fcShuffle">Shuffle</button>
+  </div>
+
+  <div class="fc-scene" id="fcScene" tabindex="0" role="button" aria-label="Flip card">
+    <div class="fc-card" id="fcCard">
+      <div class="fc-face fc-front">
+        <div class="eyebrow">Question</div>
+        <div class="fc-text" id="fcQuestion"></div>
+        <div class="hint">Click or press Space to flip</div>
+      </div>
+      <div class="fc-face fc-back">
+        <div class="eyebrow">Answer</div>
+        <div class="fc-text" id="fcAnswer"></div>
+        <div class="fc-expl" id="fcExplanation"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="fc-actions">
+    <button type="button" class="btn btn-outline btn-sm" id="fcPrev">← Previous</button>
+    <button type="button" class="btn btn-sm fc-review" id="fcReview">Review again</button>
+    <button type="button" class="btn btn-sm fc-know" id="fcKnow">Know it ✓</button>
+    <button type="button" class="btn btn-outline btn-sm" id="fcNext">Next →</button>
+  </div>
+  <p class="hint center mt-2">Cards you mark "Review again" and questions you missed in your quiz come first. Keys: ← → to move, Space to flip.</p>
+{% endif %}
+<div class="mb-4"></div>
+{% endblock %}
+
+{% block scripts %}
+{% if cards %}
+<script>
+(function () {
+  var cards = {{ cards|tojson }};
+  var courseId = {{ course_id|tojson }};
+  var total = cards.length, i = 0, mastered = {{ mastered }};
+  var card = document.getElementById('fcCard');
+  var el = function (id) { return document.getElementById(id); };
+
+  function render() {
+    var c = cards[i];
+    card.classList.remove('flipped');
+    el('fcQuestion').textContent = c.question;
+    el('fcAnswer').textContent = c.answer;
+    el('fcExplanation').textContent = c.explanation || '';
+    el('fcCounter').textContent = 'Card ' + (i + 1) + ' of ' + total;
+    var tag = '';
+    if (c.status === 'know') tag = '<span class="pill completed">Mastered</span>';
+    else if (c.status === 'review') tag = '<span class="pill in_progress">Review again</span>';
+    else if (c.missed) tag = '<span class="pill failed">Missed in quiz</span>';
+    el('fcTag').innerHTML = tag;
+  }
+  function flip() { card.classList.toggle('flipped'); }
+  function go(d) { i = (i + d + total) % total; render(); }
+
+  function mark(status) {
+    var c = cards[i];
+    fetch('/api/flashcards/' + encodeURIComponent(courseId) + '/' + c.key, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: status })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d.ok) return;
+      c.status = status;
+      mastered = d.mastered;
+      el('fcMastered').textContent = mastered;
+      el('fcBar').style.width = Math.round(mastered / total * 100) + '%';
+      go(1);
+    });
+  }
+
+  el('fcScene').addEventListener('click', flip);
+  el('fcPrev').addEventListener('click', function () { go(-1); });
+  el('fcNext').addEventListener('click', function () { go(1); });
+  el('fcKnow').addEventListener('click', function () { mark('know'); });
+  el('fcReview').addEventListener('click', function () { mark('review'); });
+  el('fcShuffle').addEventListener('click', function () {
+    for (var j = cards.length - 1; j > 0; j--) {
+      var k = Math.floor(Math.random() * (j + 1)); var t = cards[j]; cards[j] = cards[k]; cards[k] = t;
+    }
+    i = 0; render();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === ' ') { e.preventDefault(); flip(); }
+    else if (e.key === 'ArrowRight') go(1);
+    else if (e.key === 'ArrowLeft') go(-1);
+  });
+  render();
+})();
+</script>
+{% endif %}
+{% endblock %}

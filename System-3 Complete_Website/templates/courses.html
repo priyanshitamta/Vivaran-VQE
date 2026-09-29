@@ -1,0 +1,75 @@
+{% extends 'learner_base.html' if current_role == 'learner' else 'base.html' %}
+{% block title %}Course catalogue · Vivaran-VQE{% endblock %}
+{% block container_class %}wide{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><div class="eyebrow">Course catalogue</div><h1>Explore courses</h1>
+    <p class="subtle" style="font-size:.88rem;">Source: {{ source }}</p></div>
+</div>
+
+<form method="get" action="{{ url_for('course_list') }}" class="cat-filters card" id="catForm">
+  <div class="search-row">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search by title, description, category or skill…" aria-label="Search courses">
+    <select name="level" aria-label="Level" style="max-width:170px;">
+      <option value="">Any level</option>
+      {% for v, l in [('1', 'Level 1 · Beginner'), ('2', 'Level 2 · Intermediate'), ('3', 'Level 3 · Advanced')] %}<option value="{{ v }}" {{ 'selected' if level == v }}>{{ l }}</option>{% endfor %}
+    </select>
+    <button class="btn btn-primary btn-sm" type="submit">Search</button>
+  </div>
+  <div class="cat-skill-head">
+    <b>Filter by skill</b> <span class="subtle">— pick one or more; courses teaching any of them are shown</span>
+    {% if picked or q or level %}<a href="{{ url_for('course_list') }}" class="clear-link">Clear all</a>{% endif %}
+  </div>
+  <div class="cat-skill-groups">
+    {% for g in groups %}
+    <div class="cat-group">
+      <div class="sp-cat">{{ g.category }}</div>
+      <div class="sp-chips">
+        {% for s in g.skills %}
+        <label class="sp-chip"><input type="checkbox" name="skill" value="{{ s.skill_id }}" {{ 'checked' if s.skill_id in picked }} onchange="this.form.submit()">
+          <span>{{ s.skill_name }} <em>{{ s.n }}</em></span></label>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</form>
+
+<div class="cat-count">
+  <b>{{ total }}</b> course{{ 's' if total != 1 }}{% if picked %} for
+  {% for g in groups %}{% for s in g.skills if s.skill_id in picked %}<span class="chip match">{{ s.skill_name }}</span>{% endfor %}{% endfor %}{% endif %}
+  {% if q %} matching “{{ q }}”{% endif %}
+</div>
+
+<div class="cat-grid" id="catGrid">
+  {% include '_course_cards.html' %}
+</div>
+{% if not items %}<div class="card center mt-2"><p><b>No courses match.</b></p><p class="subtle">Try fewer skills or a different search.</p></div>{% endif %}
+<div class="cat-loading" id="catLoading" hidden><span class="spinner"></span> Loading more courses…</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var grid = document.getElementById('catGrid');
+    var loading = document.getElementById('catLoading');
+    var busy = false;
+    function next() {
+      var marker = grid.querySelector('.cat-more');
+      if (!marker || busy) return;
+      busy = true; loading.hidden = false;
+      var params = new URLSearchParams(window.location.search);
+      params.set('page', marker.getAttribute('data-next')); params.set('partial', '1');
+      fetch('{{ url_for('course_list') }}?' + params.toString())
+        .then(function (r) { return r.text(); })
+        .then(function (html) { marker.remove(); grid.insertAdjacentHTML('beforeend', html); watch(); })
+        .catch(function () {})
+        .finally(function () { busy = false; loading.hidden = true; });
+    }
+    var io = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) next(); });
+    }, { rootMargin: '400px' }) : null;
+    function watch() { var m = grid.querySelector('.cat-more'); if (m && io) io.observe(m); }
+    watch();
+  })();
+</script>
+{% endblock %}

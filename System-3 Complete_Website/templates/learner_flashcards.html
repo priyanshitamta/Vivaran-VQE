@@ -1,0 +1,18 @@
+{% extends 'learner_base.html' %}
+{% block title %}Flashcards · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">Flashcards</div><h1>My flashcard decks</h1>
+  <p class="subtle" style="font-size:.9rem;">A deck unlocks after you take a course's quiz. Cards you mark “Review again” come first.</p></div></div>
+{% if decks %}
+<div class="grid-cards">
+  {% for d in decks %}
+  <a class="ccard" href="{{ url_for('course_flashcards', course_id=d.course_id) }}">
+    <span class="eyebrow">{{ d.total }} card{{ 's' if d.total != 1 }}{% if d.review %} · <span style="color:var(--warning);">{{ d.review }} to review</span>{% endif %}</span>
+    <h3>{{ d.title }}</h3>
+    <div class="bar {{ 'done' if d.mastered == d.total }}"><span style="width:{{ (d.mastered / d.total * 100)|round }}%"></span></div>
+    <div class="foot"><span>{{ d.mastered }}/{{ d.total }} mastered</span><span>Study →</span></div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}<div class="card center"><div style="font-size:2rem;">🔒</div><p class="mt-1"><b>No decks yet.</b></p><p class="subtle">Take any course quiz and its questions become a flashcard deck here.</p></div>{% endif %}
+{% endblock %}

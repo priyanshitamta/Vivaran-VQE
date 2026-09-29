@@ -1,0 +1,801 @@
+role_id,designation,department,skill_id,required_level,priority_weight
+R001,Director General,NSO,S002,3,3
+R001,Director General,NSO,S008,3,3
+R001,Director General,NSO,S010,3,3
+R001,Director General,NSO,S011,2,2
+R001,Director General,NSO,S012,3,3
+R001,Director General,NSO,S013,3,3
+R001,Director General,NSO,S001,2,2
+R001,Director General,NSO,S005,1,1
+R001,Director General,NSO,S014,1,1
+R001,Director General,NSO,S003,3,3
+R001,Director General,NSO,S004,3,3
+R001,Director General,NSO,S006,2,2
+R001,Director General,NSO,S009,2,2
+R001,Director General,NSO,S015,2,2
+R001,Director General,NSO,S007,2,2
+R002,Director General,Office of Secretary,S002,3,3
+R002,Director General,Office of Secretary,S008,3,3
+R002,Director General,Office of Secretary,S010,3,3
+R002,Director General,Office of Secretary,S011,2,2
+R002,Director General,Office of Secretary,S012,3,3
+R002,Director General,Office of Secretary,S013,3,3
+R002,Director General,Office of Secretary,S001,2,2
+R002,Director General,Office of Secretary,S005,1,1
+R002,Director General,Office of Secretary,S014,1,1
+R002,Director General,Office of Secretary,S003,3,3
+R002,Director General,Office of Secretary,S004,3,3
+R002,Director General,Office of Secretary,S006,2,2
+R002,Director General,Office of Secretary,S009,2,2
+R002,Director General,Office of Secretary,S015,2,2
+R002,Director General,Office of Secretary,S007,2,2
+R003,Director General (NSS),NSO,S002,3,3
+R003,Director General (NSS),NSO,S008,3,3
+R003,Director General (NSS),NSO,S010,3,3
+R003,Director General (NSS),NSO,S011,2,2
+R003,Director General (NSS),NSO,S012,3,3
+R003,Director General (NSS),NSO,S013,3,3
+R003,Director General (NSS),NSO,S001,2,2
+R003,Director General (NSS),NSO,S005,1,1
+R003,Director General (NSS),NSO,S014,1,1
+R003,Director General (NSS),NSO,S004,2,2
+R003,Director General (NSS),NSO,S003,2,1
+R003,Director General (NSS),NSO,S015,2,2
+R003,Director General (NSS),NSO,S007,2,2
+R004,Director General (NSS),NSSTA,S002,3,3
+R004,Director General (NSS),NSSTA,S008,3,3
+R004,Director General (NSS),NSSTA,S010,3,3
+R004,Director General (NSS),NSSTA,S011,2,2
+R004,Director General (NSS),NSSTA,S012,3,3
+R004,Director General (NSS),NSSTA,S013,3,3
+R004,Director General (NSS),NSSTA,S001,2,2
+R004,Director General (NSS),NSSTA,S005,1,1
+R004,Director General (NSS),NSSTA,S014,1,1
+R004,Director General (NSS),NSSTA,S004,2,2
+R004,Director General (NSS),NSSTA,S003,2,1
+R004,Director General (NSS),NSSTA,S015,2,2
+R004,Director General (NSS),NSSTA,S007,2,2
+R005,Director General (DG),NSO,S002,3,3
+R005,Director General (DG),NSO,S008,3,3
+R005,Director General (DG),NSO,S010,3,3
+R005,Director General (DG),NSO,S011,2,2
+R005,Director General (DG),NSO,S012,3,3
+R005,Director General (DG),NSO,S013,3,3
+R005,Director General (DG),NSO,S001,2,2
+R005,Director General (DG),NSO,S005,1,1
+R005,Director General (DG),NSO,S014,1,1
+R005,Director General (DG),NSO,S003,3,3
+R005,Director General (DG),NSO,S004,3,3
+R005,Director General (DG),NSO,S006,2,2
+R005,Director General (DG),NSO,S009,2,2
+R005,Director General (DG),NSO,S015,1,1
+R006,Director General (DG),General Administration Division,S002,3,3
+R006,Director General (DG),General Administration Division,S008,3,3
+R006,Director General (DG),General Administration Division,S010,3,3
+R006,Director General (DG),General Administration Division,S011,2,2
+R006,Director General (DG),General Administration Division,S012,3,3
+R006,Director General (DG),General Administration Division,S013,3,3
+R006,Director General (DG),General Administration Division,S001,2,2
+R006,Director General (DG),General Administration Division,S005,1,1
+R006,Director General (DG),General Administration Division,S014,1,1
+R006,Director General (DG),General Administration Division,S003,3,3
+R006,Director General (DG),General Administration Division,S004,3,3
+R006,Director General (DG),General Administration Division,S006,2,2
+R006,Director General (DG),General Administration Division,S009,2,2
+R006,Director General (DG),General Administration Division,S015,1,1
+R007,Director General (CS),Central Statistics Office wing (NSO),S002,3,3
+R007,Director General (CS),Central Statistics Office wing (NSO),S008,3,3
+R007,Director General (CS),Central Statistics Office wing (NSO),S010,3,3
+R007,Director General (CS),Central Statistics Office wing (NSO),S011,2,2
+R007,Director General (CS),Central Statistics Office wing (NSO),S012,3,3
+R007,Director General (CS),Central Statistics Office wing (NSO),S013,3,3
+R007,Director General (CS),Central Statistics Office wing (NSO),S001,2,2
+R007,Director General (CS),Central Statistics Office wing (NSO),S005,1,1
+R007,Director General (CS),Central Statistics Office wing (NSO),S014,1,1
+R007,Director General (CS),Central Statistics Office wing (NSO),S004,2,2
+R007,Director General (CS),Central Statistics Office wing (NSO),S003,2,1
+R007,Director General (CS),Central Statistics Office wing (NSO),S015,2,2
+R007,Director General (CS),Central Statistics Office wing (NSO),S007,2,2
+R008,Director General (CS),Office of Secretary,S002,3,3
+R008,Director General (CS),Office of Secretary,S008,3,3
+R008,Director General (CS),Office of Secretary,S010,3,3
+R008,Director General (CS),Office of Secretary,S011,2,2
+R008,Director General (CS),Office of Secretary,S012,3,3
+R008,Director General (CS),Office of Secretary,S013,3,3
+R008,Director General (CS),Office of Secretary,S001,2,2
+R008,Director General (CS),Office of Secretary,S005,1,1
+R008,Director General (CS),Office of Secretary,S014,1,1
+R008,Director General (CS),Office of Secretary,S004,2,2
+R008,Director General (CS),Office of Secretary,S003,2,1
+R008,Director General (CS),Office of Secretary,S015,2,2
+R008,Director General (CS),Office of Secretary,S007,2,2
+R009,Additional Director General,NSO,S002,3,3
+R009,Additional Director General,NSO,S008,3,3
+R009,Additional Director General,NSO,S010,3,3
+R009,Additional Director General,NSO,S011,2,2
+R009,Additional Director General,NSO,S012,3,2
+R009,Additional Director General,NSO,S013,3,3
+R009,Additional Director General,NSO,S001,3,3
+R009,Additional Director General,NSO,S005,2,2
+R009,Additional Director General,NSO,S014,2,2
+R009,Additional Director General,NSO,S003,3,3
+R009,Additional Director General,NSO,S004,3,3
+R009,Additional Director General,NSO,S006,2,2
+R009,Additional Director General,NSO,S009,2,2
+R009,Additional Director General,NSO,S015,2,2
+R009,Additional Director General,NSO,S007,2,2
+R010,Additional Director General,AI & Big Data Unit,S002,3,3
+R010,Additional Director General,AI & Big Data Unit,S008,3,3
+R010,Additional Director General,AI & Big Data Unit,S010,3,3
+R010,Additional Director General,AI & Big Data Unit,S011,2,2
+R010,Additional Director General,AI & Big Data Unit,S012,3,2
+R010,Additional Director General,AI & Big Data Unit,S013,3,3
+R010,Additional Director General,AI & Big Data Unit,S001,3,3
+R010,Additional Director General,AI & Big Data Unit,S005,2,2
+R010,Additional Director General,AI & Big Data Unit,S014,2,2
+R010,Additional Director General,AI & Big Data Unit,S003,3,3
+R010,Additional Director General,AI & Big Data Unit,S004,3,3
+R010,Additional Director General,AI & Big Data Unit,S006,2,2
+R010,Additional Director General,AI & Big Data Unit,S009,2,2
+R010,Additional Director General,AI & Big Data Unit,S015,2,2
+R010,Additional Director General,AI & Big Data Unit,S007,2,2
+R011,Additional Director General,General Administration Division,S002,3,3
+R011,Additional Director General,General Administration Division,S008,3,3
+R011,Additional Director General,General Administration Division,S010,3,3
+R011,Additional Director General,General Administration Division,S011,2,2
+R011,Additional Director General,General Administration Division,S012,3,2
+R011,Additional Director General,General Administration Division,S013,3,3
+R011,Additional Director General,General Administration Division,S001,3,3
+R011,Additional Director General,General Administration Division,S005,2,2
+R011,Additional Director General,General Administration Division,S014,2,2
+R011,Additional Director General,General Administration Division,S003,3,3
+R011,Additional Director General,General Administration Division,S004,3,3
+R011,Additional Director General,General Administration Division,S006,2,2
+R011,Additional Director General,General Administration Division,S009,2,2
+R011,Additional Director General,General Administration Division,S015,2,2
+R011,Additional Director General,General Administration Division,S007,2,2
+R012,Joint Secretary,Office of Secretary,S002,3,3
+R012,Joint Secretary,Office of Secretary,S008,3,3
+R012,Joint Secretary,Office of Secretary,S010,3,3
+R012,Joint Secretary,Office of Secretary,S011,2,2
+R012,Joint Secretary,Office of Secretary,S012,3,2
+R012,Joint Secretary,Office of Secretary,S013,3,3
+R012,Joint Secretary,Office of Secretary,S001,2,2
+R012,Joint Secretary,Office of Secretary,S005,1,1
+R012,Joint Secretary,Office of Secretary,S014,1,1
+R012,Joint Secretary,Office of Secretary,S003,3,3
+R012,Joint Secretary,Office of Secretary,S004,3,3
+R012,Joint Secretary,Office of Secretary,S006,2,2
+R012,Joint Secretary,Office of Secretary,S009,2,2
+R012,Joint Secretary,Office of Secretary,S015,1,1
+R013,Joint Secretary,D/o Economic Affairs,S002,3,3
+R013,Joint Secretary,D/o Economic Affairs,S008,3,3
+R013,Joint Secretary,D/o Economic Affairs,S010,3,3
+R013,Joint Secretary,D/o Economic Affairs,S011,2,2
+R013,Joint Secretary,D/o Economic Affairs,S012,3,2
+R013,Joint Secretary,D/o Economic Affairs,S013,3,3
+R013,Joint Secretary,D/o Economic Affairs,S001,2,2
+R013,Joint Secretary,D/o Economic Affairs,S005,1,1
+R013,Joint Secretary,D/o Economic Affairs,S014,1,1
+R013,Joint Secretary,D/o Economic Affairs,S003,3,3
+R013,Joint Secretary,D/o Economic Affairs,S004,3,3
+R013,Joint Secretary,D/o Economic Affairs,S006,2,2
+R013,Joint Secretary,D/o Economic Affairs,S009,2,2
+R013,Joint Secretary,D/o Economic Affairs,S015,1,1
+R014,Joint Secretary,General Administration Division,S002,3,3
+R014,Joint Secretary,General Administration Division,S008,3,3
+R014,Joint Secretary,General Administration Division,S010,3,3
+R014,Joint Secretary,General Administration Division,S011,2,2
+R014,Joint Secretary,General Administration Division,S012,3,2
+R014,Joint Secretary,General Administration Division,S013,3,3
+R014,Joint Secretary,General Administration Division,S001,2,2
+R014,Joint Secretary,General Administration Division,S005,1,1
+R014,Joint Secretary,General Administration Division,S014,1,1
+R014,Joint Secretary,General Administration Division,S003,3,3
+R014,Joint Secretary,General Administration Division,S004,3,3
+R014,Joint Secretary,General Administration Division,S006,2,2
+R014,Joint Secretary,General Administration Division,S009,2,2
+R014,Joint Secretary,General Administration Division,S015,1,1
+R015,Deputy Director General,NSO (FOD),S002,2,2
+R015,Deputy Director General,NSO (FOD),S008,3,3
+R015,Deputy Director General,NSO (FOD),S010,3,3
+R015,Deputy Director General,NSO (FOD),S011,3,3
+R015,Deputy Director General,NSO (FOD),S012,2,2
+R015,Deputy Director General,NSO (FOD),S013,2,2
+R015,Deputy Director General,NSO (FOD),S001,3,3
+R015,Deputy Director General,NSO (FOD),S005,3,2
+R015,Deputy Director General,NSO (FOD),S014,3,2
+R015,Deputy Director General,NSO (FOD),S004,2,2
+R015,Deputy Director General,NSO (FOD),S006,1,1
+R015,Deputy Director General,NSO (FOD),S015,2,2
+R015,Deputy Director General,NSO (FOD),S007,3,3
+R016,Deputy Director General,NSO (NAD),S002,2,2
+R016,Deputy Director General,NSO (NAD),S008,3,3
+R016,Deputy Director General,NSO (NAD),S010,3,3
+R016,Deputy Director General,NSO (NAD),S011,3,3
+R016,Deputy Director General,NSO (NAD),S012,2,2
+R016,Deputy Director General,NSO (NAD),S013,2,2
+R016,Deputy Director General,NSO (NAD),S001,3,3
+R016,Deputy Director General,NSO (NAD),S005,3,2
+R016,Deputy Director General,NSO (NAD),S014,3,2
+R016,Deputy Director General,NSO (NAD),S004,2,2
+R016,Deputy Director General,NSO (NAD),S006,1,1
+R016,Deputy Director General,NSO (NAD),S015,2,2
+R016,Deputy Director General,NSO (NAD),S007,3,3
+R017,Deputy Director General,DES,S002,2,2
+R017,Deputy Director General,DES,S008,3,3
+R017,Deputy Director General,DES,S010,3,3
+R017,Deputy Director General,DES,S011,3,3
+R017,Deputy Director General,DES,S012,2,2
+R017,Deputy Director General,DES,S013,2,2
+R017,Deputy Director General,DES,S001,3,3
+R017,Deputy Director General,DES,S005,3,2
+R017,Deputy Director General,DES,S014,3,2
+R017,Deputy Director General,DES,S004,2,2
+R017,Deputy Director General,DES,S006,1,1
+R017,Deputy Director General,DES,S015,2,2
+R017,Deputy Director General,DES,S007,3,3
+R018,Vice Chairman,NEC Secretariat,S002,2,2
+R018,Vice Chairman,NEC Secretariat,S008,3,3
+R018,Vice Chairman,NEC Secretariat,S010,3,3
+R018,Vice Chairman,NEC Secretariat,S011,3,3
+R018,Vice Chairman,NEC Secretariat,S012,2,2
+R018,Vice Chairman,NEC Secretariat,S013,2,2
+R018,Vice Chairman,NEC Secretariat,S001,2,2
+R018,Vice Chairman,NEC Secretariat,S005,2,1
+R018,Vice Chairman,NEC Secretariat,S014,2,1
+R018,Vice Chairman,NEC Secretariat,S003,2,3
+R018,Vice Chairman,NEC Secretariat,S004,3,3
+R018,Vice Chairman,NEC Secretariat,S006,2,2
+R018,Vice Chairman,NEC Secretariat,S009,2,1
+R018,Vice Chairman,NEC Secretariat,S015,1,1
+R019,Vice Chairman,Office of Secretary,S002,2,2
+R019,Vice Chairman,Office of Secretary,S008,3,3
+R019,Vice Chairman,Office of Secretary,S010,3,3
+R019,Vice Chairman,Office of Secretary,S011,3,3
+R019,Vice Chairman,Office of Secretary,S012,2,2
+R019,Vice Chairman,Office of Secretary,S013,2,2
+R019,Vice Chairman,Office of Secretary,S001,2,2
+R019,Vice Chairman,Office of Secretary,S005,2,1
+R019,Vice Chairman,Office of Secretary,S014,2,1
+R019,Vice Chairman,Office of Secretary,S003,2,3
+R019,Vice Chairman,Office of Secretary,S004,3,3
+R019,Vice Chairman,Office of Secretary,S006,2,2
+R019,Vice Chairman,Office of Secretary,S009,2,1
+R019,Vice Chairman,Office of Secretary,S015,1,1
+R020,Statistical Advisor,O/o Economic Adviser,S002,2,2
+R020,Statistical Advisor,O/o Economic Adviser,S008,3,3
+R020,Statistical Advisor,O/o Economic Adviser,S010,3,3
+R020,Statistical Advisor,O/o Economic Adviser,S011,3,3
+R020,Statistical Advisor,O/o Economic Adviser,S012,2,2
+R020,Statistical Advisor,O/o Economic Adviser,S013,2,2
+R020,Statistical Advisor,O/o Economic Adviser,S001,3,3
+R020,Statistical Advisor,O/o Economic Adviser,S005,3,2
+R020,Statistical Advisor,O/o Economic Adviser,S014,3,2
+R020,Statistical Advisor,O/o Economic Adviser,S004,2,2
+R020,Statistical Advisor,O/o Economic Adviser,S006,1,1
+R020,Statistical Advisor,O/o Economic Adviser,S015,2,2
+R020,Statistical Advisor,O/o Economic Adviser,S007,3,3
+R021,Statistical Advisor,DES,S002,2,2
+R021,Statistical Advisor,DES,S008,3,3
+R021,Statistical Advisor,DES,S010,3,3
+R021,Statistical Advisor,DES,S011,3,3
+R021,Statistical Advisor,DES,S012,2,2
+R021,Statistical Advisor,DES,S013,2,2
+R021,Statistical Advisor,DES,S001,3,3
+R021,Statistical Advisor,DES,S005,3,2
+R021,Statistical Advisor,DES,S014,3,2
+R021,Statistical Advisor,DES,S004,2,2
+R021,Statistical Advisor,DES,S006,1,1
+R021,Statistical Advisor,DES,S015,2,2
+R021,Statistical Advisor,DES,S007,3,3
+R022,Statistical Advisor,Labour Bureau,S002,2,2
+R022,Statistical Advisor,Labour Bureau,S008,3,3
+R022,Statistical Advisor,Labour Bureau,S010,3,3
+R022,Statistical Advisor,Labour Bureau,S011,3,3
+R022,Statistical Advisor,Labour Bureau,S012,2,2
+R022,Statistical Advisor,Labour Bureau,S013,2,2
+R022,Statistical Advisor,Labour Bureau,S001,3,3
+R022,Statistical Advisor,Labour Bureau,S005,3,2
+R022,Statistical Advisor,Labour Bureau,S014,3,2
+R022,Statistical Advisor,Labour Bureau,S004,2,2
+R022,Statistical Advisor,Labour Bureau,S006,1,1
+R022,Statistical Advisor,Labour Bureau,S015,2,2
+R022,Statistical Advisor,Labour Bureau,S007,3,3
+R023,Executive Director,NSSTA,S002,2,2
+R023,Executive Director,NSSTA,S008,3,3
+R023,Executive Director,NSSTA,S010,3,3
+R023,Executive Director,NSSTA,S011,3,3
+R023,Executive Director,NSSTA,S012,2,2
+R023,Executive Director,NSSTA,S013,2,2
+R023,Executive Director,NSSTA,S001,2,2
+R023,Executive Director,NSSTA,S005,2,1
+R023,Executive Director,NSSTA,S014,2,1
+R023,Executive Director,NSSTA,S003,2,3
+R023,Executive Director,NSSTA,S004,3,3
+R023,Executive Director,NSSTA,S006,2,2
+R023,Executive Director,NSSTA,S009,2,1
+R023,Executive Director,NSSTA,S015,1,1
+R024,Executive Director,Coconut Development Board,S002,2,2
+R024,Executive Director,Coconut Development Board,S008,3,3
+R024,Executive Director,Coconut Development Board,S010,3,3
+R024,Executive Director,Coconut Development Board,S011,3,3
+R024,Executive Director,Coconut Development Board,S012,2,2
+R024,Executive Director,Coconut Development Board,S013,2,2
+R024,Executive Director,Coconut Development Board,S001,2,2
+R024,Executive Director,Coconut Development Board,S005,2,1
+R024,Executive Director,Coconut Development Board,S014,2,1
+R024,Executive Director,Coconut Development Board,S003,2,3
+R024,Executive Director,Coconut Development Board,S004,3,3
+R024,Executive Director,Coconut Development Board,S006,2,2
+R024,Executive Director,Coconut Development Board,S009,2,1
+R024,Executive Director,Coconut Development Board,S015,1,1
+R025,Director,NSO (SSD),S002,2,2
+R025,Director,NSO (SSD),S008,2,1
+R025,Director,NSO (SSD),S010,2,2
+R025,Director,NSO (SSD),S011,2,2
+R025,Director,NSO (SSD),S012,1,1
+R025,Director,NSO (SSD),S013,2,2
+R025,Director,NSO (SSD),S005,3,3
+R025,Director,NSO (SSD),S001,3,3
+R025,Director,NSO (SSD),S014,2,2
+R025,Director,NSO (SSD),S004,2,2
+R025,Director,NSO (SSD),S006,1,1
+R025,Director,NSO (SSD),S015,3,3
+R025,Director,NSO (SSD),S007,2,2
+R026,Director,NSO (ESD),S002,2,2
+R026,Director,NSO (ESD),S008,2,1
+R026,Director,NSO (ESD),S010,2,2
+R026,Director,NSO (ESD),S011,2,2
+R026,Director,NSO (ESD),S012,1,1
+R026,Director,NSO (ESD),S013,2,2
+R026,Director,NSO (ESD),S005,3,3
+R026,Director,NSO (ESD),S001,3,3
+R026,Director,NSO (ESD),S014,2,2
+R026,Director,NSO (ESD),S004,2,2
+R026,Director,NSO (ESD),S006,1,1
+R026,Director,NSO (ESD),S015,3,3
+R026,Director,NSO (ESD),S007,2,2
+R027,Director,DGCI&S,S002,2,2
+R027,Director,DGCI&S,S008,2,1
+R027,Director,DGCI&S,S010,2,2
+R027,Director,DGCI&S,S011,2,2
+R027,Director,DGCI&S,S012,1,1
+R027,Director,DGCI&S,S013,2,2
+R027,Director,DGCI&S,S005,3,3
+R027,Director,DGCI&S,S001,3,3
+R027,Director,DGCI&S,S014,2,2
+R027,Director,DGCI&S,S004,2,2
+R027,Director,DGCI&S,S006,1,1
+R027,Director,DGCI&S,S015,3,3
+R027,Director,DGCI&S,S007,2,2
+R028,Joint Director,NSO (PSD),S002,2,2
+R028,Joint Director,NSO (PSD),S008,2,1
+R028,Joint Director,NSO (PSD),S010,2,2
+R028,Joint Director,NSO (PSD),S011,2,2
+R028,Joint Director,NSO (PSD),S012,1,1
+R028,Joint Director,NSO (PSD),S013,2,2
+R028,Joint Director,NSO (PSD),S005,3,3
+R028,Joint Director,NSO (PSD),S001,3,3
+R028,Joint Director,NSO (PSD),S014,2,2
+R028,Joint Director,NSO (PSD),S004,2,2
+R028,Joint Director,NSO (PSD),S006,1,1
+R028,Joint Director,NSO (PSD),S015,3,3
+R028,Joint Director,NSO (PSD),S007,2,2
+R029,Joint Director,CBHI,S002,2,2
+R029,Joint Director,CBHI,S008,2,1
+R029,Joint Director,CBHI,S010,2,2
+R029,Joint Director,CBHI,S011,2,2
+R029,Joint Director,CBHI,S012,1,1
+R029,Joint Director,CBHI,S013,2,2
+R029,Joint Director,CBHI,S005,3,3
+R029,Joint Director,CBHI,S001,3,3
+R029,Joint Director,CBHI,S014,2,2
+R029,Joint Director,CBHI,S004,2,2
+R029,Joint Director,CBHI,S006,1,1
+R029,Joint Director,CBHI,S015,3,3
+R029,Joint Director,CBHI,S007,2,2
+R030,Joint Director,Labour Bureau,S002,2,2
+R030,Joint Director,Labour Bureau,S008,2,1
+R030,Joint Director,Labour Bureau,S010,2,2
+R030,Joint Director,Labour Bureau,S011,2,2
+R030,Joint Director,Labour Bureau,S012,1,1
+R030,Joint Director,Labour Bureau,S013,2,2
+R030,Joint Director,Labour Bureau,S005,3,3
+R030,Joint Director,Labour Bureau,S001,3,3
+R030,Joint Director,Labour Bureau,S014,2,2
+R030,Joint Director,Labour Bureau,S004,2,2
+R030,Joint Director,Labour Bureau,S006,1,1
+R030,Joint Director,Labour Bureau,S015,3,3
+R030,Joint Director,Labour Bureau,S007,2,2
+R031,Member Secretary,Central Information Commission,S002,2,2
+R031,Member Secretary,Central Information Commission,S008,2,1
+R031,Member Secretary,Central Information Commission,S010,2,2
+R031,Member Secretary,Central Information Commission,S011,2,2
+R031,Member Secretary,Central Information Commission,S012,1,1
+R031,Member Secretary,Central Information Commission,S013,2,2
+R031,Member Secretary,Central Information Commission,S005,2,2
+R031,Member Secretary,Central Information Commission,S001,2,2
+R031,Member Secretary,Central Information Commission,S014,1,1
+R031,Member Secretary,Central Information Commission,S003,2,2
+R031,Member Secretary,Central Information Commission,S004,2,3
+R031,Member Secretary,Central Information Commission,S006,2,2
+R031,Member Secretary,Central Information Commission,S009,1,1
+R031,Member Secretary,Central Information Commission,S015,1,1
+R032,Member Secretary,NC for SC/ST,S002,2,2
+R032,Member Secretary,NC for SC/ST,S008,2,1
+R032,Member Secretary,NC for SC/ST,S010,2,2
+R032,Member Secretary,NC for SC/ST,S011,2,2
+R032,Member Secretary,NC for SC/ST,S012,1,1
+R032,Member Secretary,NC for SC/ST,S013,2,2
+R032,Member Secretary,NC for SC/ST,S005,2,2
+R032,Member Secretary,NC for SC/ST,S001,2,2
+R032,Member Secretary,NC for SC/ST,S014,1,1
+R032,Member Secretary,NC for SC/ST,S003,2,2
+R032,Member Secretary,NC for SC/ST,S004,2,3
+R032,Member Secretary,NC for SC/ST,S006,2,2
+R032,Member Secretary,NC for SC/ST,S009,1,1
+R032,Member Secretary,NC for SC/ST,S015,1,1
+R033,Deputy Secretary,General Administration Division,S002,2,2
+R033,Deputy Secretary,General Administration Division,S008,2,1
+R033,Deputy Secretary,General Administration Division,S010,2,2
+R033,Deputy Secretary,General Administration Division,S011,2,2
+R033,Deputy Secretary,General Administration Division,S012,1,1
+R033,Deputy Secretary,General Administration Division,S013,2,2
+R033,Deputy Secretary,General Administration Division,S005,2,2
+R033,Deputy Secretary,General Administration Division,S001,2,2
+R033,Deputy Secretary,General Administration Division,S014,1,1
+R033,Deputy Secretary,General Administration Division,S003,2,2
+R033,Deputy Secretary,General Administration Division,S004,2,3
+R033,Deputy Secretary,General Administration Division,S006,2,2
+R033,Deputy Secretary,General Administration Division,S009,1,1
+R033,Deputy Secretary,General Administration Division,S015,1,1
+R034,Deputy Secretary,PI Wing,S002,2,2
+R034,Deputy Secretary,PI Wing,S008,2,1
+R034,Deputy Secretary,PI Wing,S010,2,2
+R034,Deputy Secretary,PI Wing,S011,2,2
+R034,Deputy Secretary,PI Wing,S012,1,1
+R034,Deputy Secretary,PI Wing,S013,2,2
+R034,Deputy Secretary,PI Wing,S005,2,2
+R034,Deputy Secretary,PI Wing,S001,2,2
+R034,Deputy Secretary,PI Wing,S014,1,1
+R034,Deputy Secretary,PI Wing,S003,2,2
+R034,Deputy Secretary,PI Wing,S004,2,3
+R034,Deputy Secretary,PI Wing,S006,2,2
+R034,Deputy Secretary,PI Wing,S009,1,1
+R034,Deputy Secretary,PI Wing,S015,1,1
+R035,Officer-on-Special Duty,Office of Secretary,S002,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S008,2,1
+R035,Officer-on-Special Duty,Office of Secretary,S010,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S011,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S012,1,1
+R035,Officer-on-Special Duty,Office of Secretary,S013,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S005,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S001,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S014,1,1
+R035,Officer-on-Special Duty,Office of Secretary,S003,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S004,2,3
+R035,Officer-on-Special Duty,Office of Secretary,S006,2,2
+R035,Officer-on-Special Duty,Office of Secretary,S009,1,1
+R035,Officer-on-Special Duty,Office of Secretary,S015,1,1
+R036,Officer-on-Special Duty,MPLADS,S002,2,2
+R036,Officer-on-Special Duty,MPLADS,S008,2,1
+R036,Officer-on-Special Duty,MPLADS,S010,2,2
+R036,Officer-on-Special Duty,MPLADS,S011,2,2
+R036,Officer-on-Special Duty,MPLADS,S012,1,1
+R036,Officer-on-Special Duty,MPLADS,S013,2,2
+R036,Officer-on-Special Duty,MPLADS,S005,2,2
+R036,Officer-on-Special Duty,MPLADS,S001,2,2
+R036,Officer-on-Special Duty,MPLADS,S014,1,1
+R036,Officer-on-Special Duty,MPLADS,S003,2,2
+R036,Officer-on-Special Duty,MPLADS,S004,2,3
+R036,Officer-on-Special Duty,MPLADS,S006,2,2
+R036,Officer-on-Special Duty,MPLADS,S009,1,1
+R036,Officer-on-Special Duty,MPLADS,S015,1,1
+R037,Private Secretary,Office of Secretary,S002,2,2
+R037,Private Secretary,Office of Secretary,S008,2,1
+R037,Private Secretary,Office of Secretary,S010,2,2
+R037,Private Secretary,Office of Secretary,S011,2,2
+R037,Private Secretary,Office of Secretary,S012,1,1
+R037,Private Secretary,Office of Secretary,S013,2,2
+R037,Private Secretary,Office of Secretary,S005,2,2
+R037,Private Secretary,Office of Secretary,S001,2,2
+R037,Private Secretary,Office of Secretary,S014,1,1
+R037,Private Secretary,Office of Secretary,S004,2,2
+R037,Private Secretary,Office of Secretary,S006,1,1
+R037,Private Secretary,Office of Secretary,S015,1,1
+R038,Private Secretary,General Administration Division,S002,2,2
+R038,Private Secretary,General Administration Division,S008,2,1
+R038,Private Secretary,General Administration Division,S010,2,2
+R038,Private Secretary,General Administration Division,S011,2,2
+R038,Private Secretary,General Administration Division,S012,1,1
+R038,Private Secretary,General Administration Division,S013,2,2
+R038,Private Secretary,General Administration Division,S005,2,2
+R038,Private Secretary,General Administration Division,S001,2,2
+R038,Private Secretary,General Administration Division,S014,1,1
+R038,Private Secretary,General Administration Division,S004,2,2
+R038,Private Secretary,General Administration Division,S006,1,1
+R038,Private Secretary,General Administration Division,S015,1,1
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S002,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S008,2,1
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S010,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S011,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S012,1,1
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S013,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S005,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S001,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S014,1,1
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S003,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S004,2,3
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S006,2,2
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S016,1,1
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S015,3,3
+R039,Deputy Commissioner,O/o Registrar General of India (RGI),S007,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S002,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S008,2,1
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S010,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S011,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S012,1,1
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S013,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S005,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S001,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S014,1,1
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S003,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S004,2,3
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S006,2,2
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S009,1,1
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S015,3,3
+R040,Deputy Commissioner,Municipal Corporation of Delhi (MCD),S007,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S002,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S008,2,1
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S010,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S011,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S012,1,1
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S013,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S005,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S001,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S014,1,1
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S004,2,2
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S006,1,1
+R041,Deputy General Manager,Rashtriya Chemicals and Fertilizers Limited,S015,1,1
+R042,Deputy General Manager,Coconut Development Board,S002,2,2
+R042,Deputy General Manager,Coconut Development Board,S008,2,1
+R042,Deputy General Manager,Coconut Development Board,S010,2,2
+R042,Deputy General Manager,Coconut Development Board,S011,2,2
+R042,Deputy General Manager,Coconut Development Board,S012,1,1
+R042,Deputy General Manager,Coconut Development Board,S013,2,2
+R042,Deputy General Manager,Coconut Development Board,S005,2,2
+R042,Deputy General Manager,Coconut Development Board,S001,2,2
+R042,Deputy General Manager,Coconut Development Board,S014,1,1
+R042,Deputy General Manager,Coconut Development Board,S004,2,2
+R042,Deputy General Manager,Coconut Development Board,S006,1,1
+R042,Deputy General Manager,Coconut Development Board,S015,1,1
+R043,Senior Manager,TRIFED,S002,2,2
+R043,Senior Manager,TRIFED,S008,2,1
+R043,Senior Manager,TRIFED,S010,2,2
+R043,Senior Manager,TRIFED,S011,2,2
+R043,Senior Manager,TRIFED,S012,1,1
+R043,Senior Manager,TRIFED,S013,2,2
+R043,Senior Manager,TRIFED,S005,2,2
+R043,Senior Manager,TRIFED,S001,2,2
+R043,Senior Manager,TRIFED,S014,1,1
+R043,Senior Manager,TRIFED,S004,2,2
+R043,Senior Manager,TRIFED,S006,1,1
+R043,Senior Manager,TRIFED,S015,1,1
+R044,Senior Manager,Coconut Development Board,S002,2,2
+R044,Senior Manager,Coconut Development Board,S008,2,1
+R044,Senior Manager,Coconut Development Board,S010,2,2
+R044,Senior Manager,Coconut Development Board,S011,2,2
+R044,Senior Manager,Coconut Development Board,S012,1,1
+R044,Senior Manager,Coconut Development Board,S013,2,2
+R044,Senior Manager,Coconut Development Board,S005,2,2
+R044,Senior Manager,Coconut Development Board,S001,2,2
+R044,Senior Manager,Coconut Development Board,S014,1,1
+R044,Senior Manager,Coconut Development Board,S004,2,2
+R044,Senior Manager,Coconut Development Board,S006,1,1
+R044,Senior Manager,Coconut Development Board,S015,1,1
+R045,Manager (M&E),NITI Aayog (DMEO),S002,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S008,2,1
+R045,Manager (M&E),NITI Aayog (DMEO),S010,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S011,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S012,1,1
+R045,Manager (M&E),NITI Aayog (DMEO),S013,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S016,3,3
+R045,Manager (M&E),NITI Aayog (DMEO),S001,3,3
+R045,Manager (M&E),NITI Aayog (DMEO),S014,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S004,2,2
+R045,Manager (M&E),NITI Aayog (DMEO),S006,1,1
+R045,Manager (M&E),NITI Aayog (DMEO),S015,3,3
+R045,Manager (M&E),NITI Aayog (DMEO),S007,2,2
+R046,Manager (M&E),MPLADS,S002,2,2
+R046,Manager (M&E),MPLADS,S008,2,1
+R046,Manager (M&E),MPLADS,S010,2,2
+R046,Manager (M&E),MPLADS,S011,2,2
+R046,Manager (M&E),MPLADS,S012,1,1
+R046,Manager (M&E),MPLADS,S013,2,2
+R046,Manager (M&E),MPLADS,S005,3,3
+R046,Manager (M&E),MPLADS,S001,3,3
+R046,Manager (M&E),MPLADS,S014,2,2
+R046,Manager (M&E),MPLADS,S004,2,2
+R046,Manager (M&E),MPLADS,S006,1,1
+R046,Manager (M&E),MPLADS,S015,3,3
+R046,Manager (M&E),MPLADS,S007,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S002,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S008,2,1
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S010,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S011,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S012,1,1
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S013,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S005,3,3
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S001,3,3
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S014,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S003,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S004,2,3
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S006,2,2
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S009,1,1
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S015,3,3
+R047,Executive Officer (Census),O/o Registrar General of India (RGI),S007,2,2
+R048,Deputy Director (Admn),General Administration Division,S002,2,2
+R048,Deputy Director (Admn),General Administration Division,S008,2,1
+R048,Deputy Director (Admn),General Administration Division,S010,2,2
+R048,Deputy Director (Admn),General Administration Division,S011,2,2
+R048,Deputy Director (Admn),General Administration Division,S012,1,1
+R048,Deputy Director (Admn),General Administration Division,S013,2,2
+R048,Deputy Director (Admn),General Administration Division,S005,2,2
+R048,Deputy Director (Admn),General Administration Division,S001,2,2
+R048,Deputy Director (Admn),General Administration Division,S014,1,1
+R048,Deputy Director (Admn),General Administration Division,S003,2,2
+R048,Deputy Director (Admn),General Administration Division,S004,2,3
+R048,Deputy Director (Admn),General Administration Division,S006,2,2
+R048,Deputy Director (Admn),General Administration Division,S009,1,1
+R048,Deputy Director (Admn),General Administration Division,S015,1,1
+R049,Deputy Passport Officer,Central Passport Organisation,S002,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S008,2,1
+R049,Deputy Passport Officer,Central Passport Organisation,S010,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S011,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S012,1,1
+R049,Deputy Passport Officer,Central Passport Organisation,S013,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S005,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S001,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S014,1,1
+R049,Deputy Passport Officer,Central Passport Organisation,S003,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S004,2,3
+R049,Deputy Passport Officer,Central Passport Organisation,S006,2,2
+R049,Deputy Passport Officer,Central Passport Organisation,S009,1,1
+R049,Deputy Passport Officer,Central Passport Organisation,S015,1,1
+R050,Deputy Passport Officer,Regional Passport Offices,S002,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S008,2,1
+R050,Deputy Passport Officer,Regional Passport Offices,S010,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S011,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S012,1,1
+R050,Deputy Passport Officer,Regional Passport Offices,S013,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S005,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S001,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S014,1,1
+R050,Deputy Passport Officer,Regional Passport Offices,S003,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S004,2,3
+R050,Deputy Passport Officer,Regional Passport Offices,S006,2,2
+R050,Deputy Passport Officer,Regional Passport Offices,S009,1,1
+R050,Deputy Passport Officer,Regional Passport Offices,S015,1,1
+R051,Deputy Director,NSO (HSD),S002,2,2
+R051,Deputy Director,NSO (HSD),S008,1,1
+R051,Deputy Director,NSO (HSD),S010,1,1
+R051,Deputy Director,NSO (HSD),S011,1,1
+R051,Deputy Director,NSO (HSD),S012,1,1
+R051,Deputy Director,NSO (HSD),S013,2,2
+R051,Deputy Director,NSO (HSD),S005,3,3
+R051,Deputy Director,NSO (HSD),S001,2,2
+R051,Deputy Director,NSO (HSD),S014,2,2
+R051,Deputy Director,NSO (HSD),S004,1,1
+R051,Deputy Director,NSO (HSD),S015,2,3
+R051,Deputy Director,NSO (HSD),S007,2,2
+R052,Deputy Director,NSO (EnSD),S002,2,2
+R052,Deputy Director,NSO (EnSD),S016,1,1
+R052,Deputy Director,NSO (EnSD),S010,1,1
+R052,Deputy Director,NSO (EnSD),S011,1,1
+R052,Deputy Director,NSO (EnSD),S012,1,1
+R052,Deputy Director,NSO (EnSD),S013,2,2
+R052,Deputy Director,NSO (EnSD),S005,3,3
+R052,Deputy Director,NSO (EnSD),S001,2,2
+R052,Deputy Director,NSO (EnSD),S014,2,2
+R052,Deputy Director,NSO (EnSD),S004,1,1
+R052,Deputy Director,NSO (EnSD),S015,2,3
+R052,Deputy Director,NSO (EnSD),S007,2,2
+R053,Deputy Director,DES,S002,2,2
+R053,Deputy Director,DES,S008,1,1
+R053,Deputy Director,DES,S010,1,1
+R053,Deputy Director,DES,S011,1,1
+R053,Deputy Director,DES,S012,1,1
+R053,Deputy Director,DES,S013,2,2
+R053,Deputy Director,DES,S005,3,3
+R053,Deputy Director,DES,S001,2,2
+R053,Deputy Director,DES,S014,2,2
+R053,Deputy Director,DES,S004,1,1
+R053,Deputy Director,DES,S015,2,3
+R053,Deputy Director,DES,S007,2,2
+R054,Under Secretary,General Administration Division,S002,2,2
+R054,Under Secretary,General Administration Division,S008,1,1
+R054,Under Secretary,General Administration Division,S010,1,1
+R054,Under Secretary,General Administration Division,S011,1,1
+R054,Under Secretary,General Administration Division,S012,1,1
+R054,Under Secretary,General Administration Division,S013,2,2
+R054,Under Secretary,General Administration Division,S005,2,2
+R054,Under Secretary,General Administration Division,S001,1,1
+R054,Under Secretary,General Administration Division,S014,1,1
+R054,Under Secretary,General Administration Division,S003,1,2
+R054,Under Secretary,General Administration Division,S004,2,2
+R054,Under Secretary,General Administration Division,S006,2,2
+R054,Under Secretary,General Administration Division,S015,1,1
+R055,Under Secretary,D/o Expenditure,S002,2,2
+R055,Under Secretary,D/o Expenditure,S008,1,1
+R055,Under Secretary,D/o Expenditure,S010,1,1
+R055,Under Secretary,D/o Expenditure,S011,1,1
+R055,Under Secretary,D/o Expenditure,S012,1,1
+R055,Under Secretary,D/o Expenditure,S013,2,2
+R055,Under Secretary,D/o Expenditure,S005,2,2
+R055,Under Secretary,D/o Expenditure,S001,1,1
+R055,Under Secretary,D/o Expenditure,S014,1,1
+R055,Under Secretary,D/o Expenditure,S003,1,2
+R055,Under Secretary,D/o Expenditure,S004,2,2
+R055,Under Secretary,D/o Expenditure,S006,2,2
+R055,Under Secretary,D/o Expenditure,S015,1,1
+R056,Assistant Director,NSO (FOD),S002,1,2
+R056,Assistant Director,NSO (FOD),S008,1,1
+R056,Assistant Director,NSO (FOD),S010,1,1
+R056,Assistant Director,NSO (FOD),S011,1,1
+R056,Assistant Director,NSO (FOD),S012,1,1
+R056,Assistant Director,NSO (FOD),S013,1,2
+R056,Assistant Director,NSO (FOD),S005,3,3
+R056,Assistant Director,NSO (FOD),S001,2,2
+R056,Assistant Director,NSO (FOD),S014,2,2
+R056,Assistant Director,NSO (FOD),S004,1,1
+R056,Assistant Director,NSO (FOD),S015,2,3
+R056,Assistant Director,NSO (FOD),S007,2,2
+R057,Assistant Director,NSO (DIID),S002,1,2
+R057,Assistant Director,NSO (DIID),S008,1,1
+R057,Assistant Director,NSO (DIID),S016,1,1
+R057,Assistant Director,NSO (DIID),S011,1,1
+R057,Assistant Director,NSO (DIID),S012,1,1
+R057,Assistant Director,NSO (DIID),S013,1,2
+R057,Assistant Director,NSO (DIID),S005,3,3
+R057,Assistant Director,NSO (DIID),S001,2,2
+R057,Assistant Director,NSO (DIID),S014,2,2
+R057,Assistant Director,NSO (DIID),S004,1,1
+R057,Assistant Director,NSO (DIID),S015,2,3
+R057,Assistant Director,NSO (DIID),S007,2,2
+R058,Assistant Director,DES,S002,1,2
+R058,Assistant Director,DES,S008,1,1
+R058,Assistant Director,DES,S010,1,1
+R058,Assistant Director,DES,S011,1,1
+R058,Assistant Director,DES,S012,1,1
+R058,Assistant Director,DES,S013,1,2
+R058,Assistant Director,DES,S005,3,3
+R058,Assistant Director,DES,S001,2,2
+R058,Assistant Director,DES,S014,2,2
+R058,Assistant Director,DES,S004,1,1
+R058,Assistant Director,DES,S015,2,3
+R058,Assistant Director,DES,S007,2,2
+R059,Assistant Director (Probationer),NSO (RAU),S002,1,2
+R059,Assistant Director (Probationer),NSO (RAU),S008,1,1
+R059,Assistant Director (Probationer),NSO (RAU),S010,1,1
+R059,Assistant Director (Probationer),NSO (RAU),S011,1,1
+R059,Assistant Director (Probationer),NSO (RAU),S012,1,1
+R059,Assistant Director (Probationer),NSO (RAU),S013,1,2
+R059,Assistant Director (Probationer),NSO (RAU),S005,3,3
+R059,Assistant Director (Probationer),NSO (RAU),S001,2,2
+R059,Assistant Director (Probationer),NSO (RAU),S014,2,2
+R059,Assistant Director (Probationer),NSO (RAU),S004,1,1
+R059,Assistant Director (Probationer),NSO (RAU),S015,2,3
+R059,Assistant Director (Probationer),NSO (RAU),S007,2,2
+R060,Assistant Director (Probationer),NSSTA,S002,1,2
+R060,Assistant Director (Probationer),NSSTA,S008,1,1
+R060,Assistant Director (Probationer),NSSTA,S010,1,1
+R060,Assistant Director (Probationer),NSSTA,S011,1,1
+R060,Assistant Director (Probationer),NSSTA,S012,1,1
+R060,Assistant Director (Probationer),NSSTA,S013,1,2
+R060,Assistant Director (Probationer),NSSTA,S005,3,3
+R060,Assistant Director (Probationer),NSSTA,S001,2,2
+R060,Assistant Director (Probationer),NSSTA,S014,2,2
+R060,Assistant Director (Probationer),NSSTA,S016,1,1
+R060,Assistant Director (Probationer),NSSTA,S015,2,3
+R060,Assistant Director (Probationer),NSSTA,S007,2,2

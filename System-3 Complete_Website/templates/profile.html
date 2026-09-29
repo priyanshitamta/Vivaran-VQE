@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Profile · Vivaran-VQE{% endblock %}
+{% block nav_back %}
+<button class="nav-back" id="backBtn" type="button" title="Go back" aria-label="Go back">
+  <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+</button>
+{% endblock %}
+{% block content %}
+<h1 style="font-size:1.6rem; color:var(--brand-deep); margin:1.25rem 0;">Hi, {{ current_user }}!</h1>
+
+{% if not submissions %}
+<div class="card center">
+  <p class="subtle">No employee profiles submitted yet.</p>
+  <a class="btn btn-primary mt-3" href="{{ url_for('recommendation') }}">Register an employee</a>
+</div>
+{% endif %}
+
+{% for row in submissions %}
+  {% set s = row.submission %}
+  <section class="panel mt-4" style="padding:1.5rem;">
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem; border-bottom:1px solid var(--border); padding-bottom:.75rem; margin-bottom:1rem;">
+      <h2 style="font-size:1.1rem; color:var(--brand-deep);">
+        {{ s.name or s.employee_id }}
+        {% if s.name %}<span class="subtle" style="font-weight:400;"> · {{ s.employee_id }}</span>{% endif %}
+      </h2>
+      <span class="subtle" style="font-size:.82rem;">{{ s.submitted_at[:10] }} {{ s.submitted_at[11:19] }} UTC</span>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.25rem 1.5rem; font-size:.9rem;">
+      <div><b>Designation</b><br>{{ s.designation or '—' }}</div>
+      <div><b>Department</b><br>{{ s.department or '—' }}</div>
+      <div><b>Work experience</b><br>{{ s.work_experience_years if s.work_experience_years is not none else '—' }} years</div>
+      <div><b>Education</b><br>{{ s.educational_qualifications or '—' }}</div>
+      <div><b>Current assignment</b><br>{{ s.current_assignment or '—' }}</div>
+    </div>
+
+    {% set ratings = s.self_rated_skills or {} %}
+    {% if ratings %}
+    <p style="font-size:.9rem; margin-top:.9rem;">
+      <b>Self-rated skills:</b>
+      {% for sid, level in ratings.items() %}
+        <span class="pill unverified">{{ skill_names.get(sid, sid) }} · {{ 'Beginner' if level==1 else ('Intermediate' if level==2 else ('Advanced' if level==3 else level)) }}</span>
+      {% endfor %}
+    </p>
+    {% endif %}
+
+    {% set trainings = s.previous_trainings or [] %}
+    {% if trainings %}
+    <p style="font-size:.9rem; margin-top:.5rem;"><b>Previous trainings:</b> {{ trainings|join(', ') }}</p>
+    {% endif %}
+
+    <div class="section-title">Recommended courses</div>
+    {% for item in row.courses %}
+      {% set rec = item.course %}
+      {% set a = item.latest_attempt %}
+      <div class="course-card" style="margin-bottom:.6rem;">
+        <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:.5rem; align-items:center;">
+          <div>
+            <h3 style="display:inline;">{{ rec.course_title }}</h3>
+            <span class="subtle" style="font-size:.8rem;"> · {{ rec.course_id }}</span>
+          </div>
+          {% if a and a.status == 'graded' %}
+            <a class="btn btn-outline btn-sm" href="{{ url_for('quiz_results', attempt_id=a.id) }}">
+              Quiz: {{ a.score }}/{{ a.total }} ({{ "%.1f"|format(a.accuracy or 0) }}%)
+            </a>
+          {% elif a and a.status in ('generating', 'ready') %}
+            <a class="btn btn-primary btn-sm" href="{{ url_for('quiz_attempt', attempt_id=a.id) }}">Continue quiz</a>
+          {% else %}
+            <form method="post" action="{{ url_for('quiz_start') }}" style="display:inline;">
+              <input type="hidden" name="submission_id" value="{{ s.id }}">
+              <input type="hidden" name="course_id" value="{{ rec.course_id }}">
+              <button type="submit" class="btn btn-primary btn-sm">Take a quiz</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </section>
+{% endfor %}
+{% endblock %}

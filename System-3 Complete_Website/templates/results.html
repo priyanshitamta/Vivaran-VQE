@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Recommended Courses · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="center mt-3 mb-1">
+  <div class="employee-id" style="color: var(--brand); font-weight: 700; font-size: 1.05rem;">
+    Employee ID: <b>{{ submission.employee_id }}</b>
+    {% if submission.name %}<span class="subtle" style="font-weight:400;"> · {{ submission.name }}</span>{% endif %}
+  </div>
+  <div class="hero-title" style="font-size: clamp(1.5rem,4vw,2.1rem);">Recommended Courses</div>
+</div>
+
+<p class="subtle center" style="max-width: 640px; margin: .4rem auto 0;">{{ lead }}</p>
+<p class="center" style="font-size: .9rem; color: var(--ink-dim); margin-bottom: 2rem;">{{ sub }}</p>
+
+{% for item in courses %}
+  {% set rec = item.course %}
+  <div class="course-card">
+    <h3>{{ rec.course_title }}</h3>
+    <div class="subtle" style="font-size:.85rem;">{{ rec.course_id }}</div>
+    {% if rec.description %}<p class="mt-1">{{ rec.description }}</p>{% endif %}
+    <div class="course-meta">
+      {% if rec.provider %}<span><b>Provider</b> {{ rec.provider }}</span>{% endif %}
+      {% if rec.mode %}<span><b>Mode</b> {{ rec.mode }}</span>{% endif %}
+      {% if rec.duration_minutes %}<span><b>Duration</b> {{ rec.duration_minutes }} min</span>{% endif %}
+      {% if rec.language %}<span><b>Language</b> {{ rec.language }}</span>{% endif %}
+    </div>
+    {% if rec.matched_skill_names %}
+    <div style="font-size:.85rem; color: var(--ink-dim); margin-bottom:.9rem;">
+      Covers: {% for name in rec.matched_skill_names %}<span class="pill unverified">{{ name }}</span> {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="quiz-link">
+      {% set a = item.latest_attempt %}
+      {% if a and a.status == 'graded' %}
+        <a class="btn btn-outline btn-sm" href="{{ url_for('quiz_results', attempt_id=a.id) }}">View quiz result
+          {% if a.score is not none %}· {{ a.score }}/{{ a.total }}{% endif %}
+        </a>
+      {% elif a %}
+        <a class="btn btn-primary btn-sm" href="{{ url_for('quiz_attempt', attempt_id=a.id) }}">Continue quiz</a>
+        <span class="hint">already started</span>
+      {% else %}
+        <form method="post" action="{{ url_for('quiz_start') }}" style="display:inline;">
+          <input type="hidden" name="submission_id" value="{{ submission.id }}">
+          <input type="hidden" name="course_id" value="{{ rec.course_id }}">
+          <button type="submit" class="btn btn-primary btn-sm">Take a quiz</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <p class="muted-empty">No courses were recommended for this profile.</p>
+{% endfor %}
+
+<div class="center mt-4 mb-4">
+  <a class="btn btn-outline" href="{{ url_for('recommendation') }}">Start a new entry</a>
+</div>
+{% endblock %}

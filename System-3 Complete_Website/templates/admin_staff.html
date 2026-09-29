@@ -1,0 +1,61 @@
+{% extends 'admin_base.html' %}
+{% from '_account_actions.html' import account_actions %}
+{% block title %}Admin · Staff accounts · Vivaran-VQE{% endblock %}
+{% block acontent %}
+{% set here = url_for('admin_staff') %}
+<div class="page-head"><div><div class="eyebrow">Staff accounts</div><h1>Admins, trainers &amp; access</h1></div></div>
+
+<div class="section"><h2>Admins <span class="count">{{ admins|length }} of {{ max_admins }} maximum</span></h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Admin</th><th>Email</th><th>Role</th><th>Status</th><th></th></tr></thead>
+    <tbody>{% for a in admins %}
+      <tr><td><b>{{ a.username }}</b>{% if a.id == me.id %} <span class="subtle">(you)</span>{% endif %}</td><td class="subtle">{{ a.email or '—' }}</td>
+        <td>{% if a.is_primary %}<span class="pill completed">Main admin</span>{% else %}<span class="pill not_started">Admin</span>{% endif %}{% if a.must_change_password %} <span class="pill in_progress">Temp password</span>{% endif %}</td>
+        <td>{% if a.active %}Active{% else %}<span class="pill failed">Deactivated</span>{% endif %}</td>
+        <td style="text-align:right;">{% if me.is_primary and not a.is_primary %}
+          <div style="display:flex; gap:.4rem; justify-content:flex-end;">
+            {{ account_actions(a, here) }}
+            <form method="post" action="{{ url_for('admin_remove_admin', user_id=a.id) }}" data-msg="Remove admin {{ a.username }}? Their account will be deleted." onsubmit="return confirm(this.dataset.msg);"><button class="btn btn-sm btn-danger-outline" type="submit">Remove admin</button></form>
+          </div>{% endif %}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% if me.is_primary %}
+    {% if can_add_admin %}
+    <form method="post" action="{{ url_for('admin_add_admin') }}" class="card mt-2 inline-form">
+      <div class="field"><label for="adm-email">Add an admin by government email</label><input id="adm-email" type="email" name="email" placeholder="name@gov.in" required></div>
+      <button class="btn btn-primary" type="submit">Add admin</button>
+      <p class="hint" style="grid-column:1/-1;">You'll get a one-time temporary password to give them. They must set their own password when they first log in. Up to {{ max_admins - 1 }} admins besides you.</p>
+    </form>
+    {% else %}<p class="notice mt-2">The platform already has the maximum of {{ max_admins }} admins. Remove one to add another.</p>{% endif %}
+  {% else %}<p class="hint mt-2">Only the main admin can add or remove admins.</p>{% endif %}
+</div>
+
+<div class="section"><h2>Trainers</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Trainer</th><th>Email</th><th class="num">Students</th><th>Status</th><th></th></tr></thead>
+    <tbody>{% for t in trainers %}
+      <tr><td><a href="{{ url_for('admin_trainer', trainer_id=t.id) }}"><b>{{ t.username }}</b></a></td><td class="subtle">{{ t.email or '—' }}</td><td class="num">{{ t.students }}</td>
+        <td>{% if t.active %}<span class="pill completed">Active</span>{% else %}<span class="pill failed">Deactivated</span>{% endif %}</td>
+        <td style="text-align:right;">{{ account_actions(dict(t, role='trainer'), here) }}</td></tr>
+    {% else %}<tr><td colspan="5" class="muted-empty">No trainers yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <form class="card admin-form mt-2" method="post" action="{{ url_for('admin_create_user') }}" style="padding:1rem;">
+    <div class="field"><label>Username</label><input name="username" required></div>
+    <div class="field"><label>Email (optional)</label><input name="email" type="email" placeholder="name@gov.in"></div>
+    <div class="field"><label>Password</label><input name="password" type="password" minlength="8" required></div>
+    <div class="field"><label>&nbsp;</label><span class="subtle" style="font-size:.85rem;">New trainer</span></div>
+    <button class="btn btn-primary" type="submit">Add trainer</button>
+  </form>
+</div>
+
+<div class="section"><h2>Learner accounts <span class="count">deactivate or reset passwords</span></h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Learner</th><th>Email</th><th>Status</th><th></th></tr></thead>
+    <tbody>{% for l in learners %}
+      <tr><td><a href="{{ url_for('admin_learner', learner_id=l.id) }}">{{ l.username }}</a></td><td class="subtle">{{ l.email or '—' }}</td>
+        <td>{% if l.active %}<span class="pill completed">Active</span>{% else %}<span class="pill failed">Deactivated</span>{% endif %}{% if l.must_change_password %} <span class="pill in_progress">Temp password</span>{% endif %}</td>
+        <td style="text-align:right;">{{ account_actions(l, here) }}</td></tr>
+    {% else %}<tr><td colspan="4" class="muted-empty">No learners.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'learner_base.html' %}
+{% from '_learner_bits.html' import results_table %}
+{% block title %}Quiz results · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="page-head"><div><div class="eyebrow">Quiz results</div><h1>All my quiz attempts</h1></div></div>
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">{{ results|length }}</div><div class="l">Quizzes taken</div></div>
+  <div class="kpi"><div class="n">{{ passed }}</div><div class="l">Passed</div></div>
+  <div class="kpi"><div class="n">{{ results|length - passed }}</div><div class="l">Not passed</div></div>
+  <div class="kpi"><div class="n">{{ threshold|round|int }}%</div><div class="l">Pass mark</div></div>
+</div>
+<div class="section">{{ results_table(results) }}</div>
+{% endblock %}

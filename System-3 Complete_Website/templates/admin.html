@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% from '_learner_tables.html' import learners_table, courses_table, results_table %}
+{% block title %}Admin Dashboard · Antah.ai{% endblock %}
+{% block container_class %}wide{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div><div class="eyebrow">Admin Dashboard</div><h1>Platform overview</h1></div>
+  <form method="post" action="{{ url_for('admin_reload_courses') }}">
+    <button class="btn btn-outline btn-sm" type="submit" title="Re-read the course document">Reload course catalogue</button>
+  </form>
+</div>
+{% if message %}<div class="form-ok">{{ message }}</div>{% endif %}
+{% if error %}<div class="form-error">{{ error }}</div>{% endif %}
+
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">{{ stats.learners }}</div><div class="l">Registered learners</div></div>
+  <div class="kpi"><div class="n">{{ stats.trainers }}</div><div class="l">Trainers</div></div>
+  <div class="kpi"><div class="n">{{ stats.courses }}</div><div class="l">Courses</div></div>
+  <div class="kpi"><div class="n">{{ stats.enrollments }}</div><div class="l">Enrollments</div></div>
+  <div class="kpi"><div class="n">{{ stats.completions }}</div><div class="l">Completions</div></div>
+  <div class="kpi"><div class="n">{{ stats.quizzes }}</div><div class="l">Quizzes graded</div></div>
+  <div class="kpi"><div class="n">{{ (stats.pass_rate|string + '%') if stats.pass_rate is not none else '—' }}</div><div class="l">Pass rate</div></div>
+  <div class="kpi"><div class="n">{{ stats.cached_quizzes }}</div><div class="l">Cached course quizzes</div></div>
+</div>
+
+<div class="section" id="approvals">
+  <h2>Course approvals <span class="count">admin can approve or reject any pending upload</span></h2>
+  {% if pending_courses %}
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Course</th><th>Uploaded by</th><th>Skills</th><th>Reviewers</th><th style="min-width:320px;">Decision</th></tr></thead>
+      <tbody>
+      {% for c in pending_courses %}
+        <tr>
+          <td><a href="{{ url_for('course_page', course_id=c.course_id) }}"><b>{{ c.title }}</b></a><div class="subtle" style="font-size:.8rem;">{{ c.course_id }} · {{ c.created_at[:10] }}</div></td>
+          <td>{{ c.trainer_username }}</td>
+          <td>{% for sid in c.skills %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</td>
+          <td>{% if c.needs_admin %}<span class="pill failed">No trainer in this field — needs admin</span>{% else %}<span class="subtle">{{ c.reviewers }} eligible trainer{{ 's' if c.reviewers != 1 }}</span>{% endif %}</td>
+          <td>
+            <form method="post" action="{{ url_for('admin_review_course', row_id=c.id) }}" class="admin-review">
+              <input name="note" placeholder="Comment (required to reject)">
+              <button class="btn btn-ok btn-sm" name="action" value="approve" type="submit">Approve</button>
+              <button class="btn btn-danger-outline btn-sm" name="action" value="reject" type="submit">Reject</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<p class="muted-empty">No courses waiting for approval.</p>{% endif %}
+</div>
+
+<div class="section" id="learners">
+  <h2>Learners, progress &amp; recommendations <span class="count">change a learner's trainer from the dropdown</span></h2>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Learner</th><th>Designation</th><th>Area of Experience</th>
+        <th class="num">Recommended</th><th class="num">In progress</th><th class="num">Completed</th><th class="num">Avg quiz</th><th>Trainer</th></tr></thead>
+      <tbody>
+      {% for l in learners %}
+        <tr>
+          <td><b>{{ l.username }}</b><div class="subtle" style="font-size:.8rem;">{{ l.email or '' }}</div></td>
+          <td>{{ l.designation or '— (profile incomplete)' }}{% if l.department %}<div class="subtle" style="font-size:.8rem;">{{ l.department }}</div>{% endif %}</td>
+          <td>{{ l.area_of_experience or '—' }}</td>
+          <td class="num" title="{{ l.roadmap|join(' → ') }}">{{ l.recommended }}</td>
+          <td class="num">{{ l.in_progress }}</td>
+          <td class="num">{{ l.completed }}</td>
+          <td class="num">{{ ('%.0f%%'|format(l.avg_score)) if l.avg_score is not none else '—' }}</td>
+          <td>
+            {% if l.role_id %}
+            <form method="post" action="{{ url_for('admin_assign_trainer') }}" class="assign-form">
+              <input type="hidden" name="learner_id" value="{{ l.id }}">
+              <select name="trainer_id" onchange="this.form.submit()" aria-label="Trainer for {{ l.username }}">
+                <option value="" {{ 'selected' if not l.trainer_id }}>— Unassigned —</option>
+                {% for t in trainer_rows %}<option value="{{ t.id }}" {{ 'selected' if l.trainer_id == t.id }}>{{ t.username }} ({{ t.students }})</option>{% endfor %}
+              </select>
+              <noscript><button class="btn btn-sm btn-outline" type="submit">Save</button></noscript>
+            </form>
+            {% else %}<span class="subtle">—</span>{% endif %}
+          </td>
+        </tr>
+      {% else %}<tr><td colspan="8" class="muted-empty">No learners registered yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Trainers <span class="count">specialisations &amp; students</span></h2>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Trainer</th><th>Email</th><th>Specialisations</th><th class="num">Students</th></tr></thead>
+      <tbody>
+      {% for t in trainer_rows %}
+        <tr><td><b>{{ t.username }}</b></td><td class="subtle">{{ t.email or '—' }}</td>
+          <td>{% if t.has_profile %}{% for sid in t.specialisations %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}{% else %}<span class="subtle">Not set yet (asked at first login)</span>{% endif %}</td>
+          <td class="num">{{ t.students }}</td></tr>
+      {% else %}<tr><td colspan="4" class="muted-empty">No trainers yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section">
+  <h2>Course completion</h2>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>Learner</th><th>Course</th><th>Status</th><th class="num">Progress</th><th class="num">Best quiz</th><th>Started</th><th>Completed</th></tr></thead>
+      <tbody>
+      {% for e in enrollments %}
+        <tr><td>{{ e.username }}</td><td>{{ e.course_title }}</td>
+          <td><span class="pill {{ e.status }}">{{ e.status|replace('_', ' ')|title }}</span></td>
+          <td class="num">{{ e.progress }}%</td>
+          <td class="num">{{ (e.best_score|string + '/' + e.best_total|string) if e.best_total else '—' }}</td>
+          <td class="subtle">{{ (e.started_at or '')[:10] }}</td><td class="subtle">{{ (e.completed_at or '—')[:10] }}</td></tr>
+      {% else %}<tr><td colspan="7" class="muted-empty">No enrollments yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section"><h2>Quiz results <span class="count">pass mark {{ threshold|round|int }}%</span></h2>{{ results_table(attempts) }}</div>
+<div class="section"><h2>Courses <span class="count">catalogue: {{ catalogue_source }}</span></h2>{{ courses_table(course_rows) }}</div>
+
+<div class="section">
+  <h2>Staff accounts</h2>
+  <div class="table-wrap mb-2">
+    <table class="data">
+      <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Created</th></tr></thead>
+      <tbody>
+      {% for u in admins + trainers %}
+        <tr><td>{{ u.username }}</td><td class="subtle">{{ u.email or '—' }}</td><td><span class="pill unverified">{{ u.role }}</span></td><td class="subtle">{{ (u.created_at or '')[:10] }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <form class="card admin-form" method="post" action="{{ url_for('admin_create_user') }}" style="padding:1rem;">
+    <div class="field"><label>Username</label><input name="username" required></div>
+    <div class="field"><label>Email (optional)</label><input name="email" type="email" placeholder="name@gov.in"></div>
+    <div class="field"><label>Password</label><input name="password" type="password" minlength="8" required></div>
+    <div class="field"><label>Role</label><select name="role"><option value="trainer">Trainer</option><option value="admin">Admin</option></select></div>
+    <button class="btn btn-primary" type="submit">Add</button>
+  </form>
+</div>
+
+<div class="section">
+  <h2>Workforce analytics <span class="count">from System 1</span></h2>
+  {% if workforce %}
+  <div class="kpis" style="margin-top:0;">
+    <div class="kpi"><div class="n">{{ workforce.count }}</div><div class="l">Employees analysed</div></div>
+    <div class="kpi"><div class="n">{{ workforce.avg_gaps_per_employee }}</div><div class="l">Avg skill gaps / employee</div></div>
+    <div class="kpi"><div class="n">{{ workforce.fully_qualified_count }}</div><div class="l">Fully qualified</div></div>
+  </div>
+  <div class="table-wrap mt-2">
+    <table class="data"><thead><tr><th>Department</th><th class="num">Employees</th></tr></thead>
+      <tbody>{% for d in workforce.by_department %}<tr><td>{{ d.key }}</td><td class="num">{{ d.count }}</td></tr>{% endfor %}</tbody></table>
+  </div>
+  {% else %}
+  <p class="muted-empty">System 1 (recommendation engine) is not reachable, so workforce analytics are unavailable.</p>
+  {% endif %}
+</div>
+<div class="mb-4"></div>
+{% endblock %}

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Results — MCQ Generator</title>
+<style>
+  :root {
+    --blue-900:#06305c; --blue-800:#0a4a8c; --blue-700:#0d5fae; --blue-600:#1573c9; --blue-50:#eaf3fc;
+    --orange-600:#e85f1c; --orange-500:#f2751f; --orange-50:#fff2e9;
+    --gray-900:#1f2937; --gray-700:#4b5563; --gray-500:#6b7280; --gray-300:#d1d5db; --gray-200:#e5e7eb; --gray-100:#f3f4f6; --gray-50:#f8fafc;
+    --green-600:#1a7d3f; --green-50:#eafaf0; --green-200:#bfe9cf;
+    --red-600:#c0392b; --red-50:#fdecec; --red-200:#f3c6c1;
+    --radius:12px;
+    --shadow: 0 1px 3px rgba(15,45,90,0.08), 0 6px 18px rgba(15,45,90,0.06);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-900);
+    line-height: 1.5;
+  }
+
+  .navbar {
+    background: #ffffff;
+    border-bottom: 1px solid var(--gray-200);
+    box-shadow: 0 1px 2px rgba(15,45,90,0.04);
+  }
+  .navbar-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--blue-700), var(--blue-900));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 15px;
+  }
+  .brand-name { font-weight: 700; font-size: 17px; color: var(--blue-900); }
+  .nav-link {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--blue-700);
+    text-decoration: none;
+    padding: 8px 14px;
+    border: 1px solid var(--blue-200, #bcd9f2);
+    border-radius: 8px;
+  }
+  .nav-link:hover { background: var(--blue-50); }
+
+  .page-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 20px 64px;
+  }
+
+  .page-header { margin-bottom: 22px; }
+  .page-header h1 {
+    font-size: 26px;
+    margin: 0 0 6px;
+    color: var(--blue-900);
+    font-weight: 700;
+  }
+  .page-header p {
+    margin: 0;
+    color: var(--gray-700);
+    font-size: 14.5px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-top: 3px solid var(--blue-600);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px 18px;
+  }
+  .stat-card.correct { border-top-color: var(--green-600); }
+  .stat-card.incorrect { border-top-color: var(--red-600); }
+  .stat-card.accuracy { border-top-color: var(--orange-600); }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gray-900);
+  }
+  .stat-label {
+    font-size: 12.5px;
+    color: var(--gray-500);
+    margin-top: 2px;
+  }
+
+  .badge-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+  }
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid;
+  }
+  .status-pill.verified { background: var(--green-50); border-color: var(--green-200); color: var(--green-600); }
+  .status-pill.flagged { background: var(--orange-50); border-color: #f7cfa9; color: var(--orange-600); }
+  .status-pill.unverified { background: var(--gray-100); border-color: var(--gray-200); color: var(--gray-500); }
+
+  .progress-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 30px;
+  }
+  .progress-card h2 {
+    font-size: 15.5px;
+    margin: 0 0 14px;
+    color: var(--blue-900);
+    font-weight: 700;
+  }
+  .progress-track {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .progress-step {
+    background: var(--blue-50);
+    border-radius: 9px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 100px;
+  }
+  .progress-step .val { font-size: 18px; font-weight: 700; color: var(--blue-800); }
+  .progress-step .lbl { font-size: 11.5px; color: var(--gray-500); margin-top: 2px; }
+  .progress-arrow { color: var(--gray-300); font-size: 18px; }
+  .progress-delta {
+    margin-left: auto;
+    font-size: 13.5px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+  }
+  .progress-delta.up { background: var(--green-50); color: var(--green-600); }
+  .progress-delta.down { background: var(--red-50); color: var(--red-600); }
+  .progress-delta.flat { background: var(--gray-100); color: var(--gray-500); }
+
+  .section-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--blue-900);
+    margin: 0 0 16px;
+  }
+
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-left: 4px solid var(--green-600);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+    margin-bottom: 16px;
+  }
+  .question-card.incorrect { border-left-color: var(--red-600); }
+
+  .question-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .question-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gray-900);
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  }
+  .question-title .qnum { color: var(--blue-700); margin-right: 6px; }
+
+  .answer-row {
+    display: flex;
+    gap: 8px;
+    font-size: 13.5px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  .answer-label { color: var(--gray-500); min-width: 110px; }
+  .answer-value { font-weight: 600; word-wrap: break-word; overflow-wrap: anywhere; }
+  .answer-value.correct-text { color: var(--green-600); }
+  .answer-value.incorrect-text { color: var(--red-600); }
+
+  .explanation-box {
+    margin-top: 12px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 9px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+    color: var(--gray-700);
+  }
+  .explanation-box .exp-label {
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: 4px;
+    font-size: 12.5px;
+  }
+  .source-box {
+    margin-top: 8px;
+    font-size: 12.5px;
+    color: var(--gray-500);
+    font-style: italic;
+  }
+
+  details.transcript-details {
+    margin-top: 26px;
+    background: #fff;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+  }
+  details.transcript-details summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--blue-700);
+    font-size: 14px;
+  }
+  .transcript-text {
+    margin-top: 12px;
+    font-size: 13px;
+    color: var(--gray-700);
+    white-space: pre-wrap;
+    max-height: 280px;
+    overflow-y: auto;
+    word-wrap: break-word;
+  }
+
+  @media (max-width: 720px) {
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .question-card-head { flex-direction: column; }
+    .progress-delta { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="navbar-inner">
+      <a href="{{ url_for('index') }}" class="brand">
+        <span class="brand-mark">Q</span>
+        <span class="brand-name">MCQ Generator</span>
+      </a>
+      <a href="{{ url_for('index') }}" class="nav-link">Start a New Course</a>
+    </div>
+  </header>
+
+  <main class="page-wrap">
+    <div class="page-header">
+      <h1>Quiz Results</h1>
+      <p>{{ topic }}</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">{{ total_attempted }}</div>
+        <div class="stat-label">Total Questions</div>
+      </div>
+      <div class="stat-card correct">
+        <div class="stat-value">{{ total_correct }}</div>
+        <div class="stat-label">Correct Answers</div>
+      </div>
+      <div class="stat-card incorrect">
+        <div class="stat-value">{{ total_incorrect }}</div>
+        <div class="stat-label">Incorrect Answers</div>
+      </div>
+      <div class="stat-card accuracy">
+        <div class="stat-value">{{ accuracy_percentage }}%</div>
+        <div class="stat-label">Accuracy</div>
+      </div>
+    </div>
+
+    <div class="badge-row">
+      <span class="status-pill verified">&#10003; Verified: {{ results | selectattr('verification_status', 'equalto', 'verified') | list | length }}</span>
+      <span class="status-pill flagged">&#9888; Flagged: {{ results | selectattr('verification_status', 'equalto', 'flagged') | list | length }}</span>
+      <span class="status-pill unverified">? Unverified: {{ results | selectattr('verification_status', 'equalto', 'unverified') | list | length }}</span>
+    </div>
+
+    {% if progress and progress.lecture_count and progress.lecture_count > 0 %}
+      <div class="progress-card">
+        <h2>Course Progress</h2>
+        <div class="progress-track">
+          <div class="progress-step">
+            <div class="val">{{ progress.first_lecture_accuracy }}%</div>
+            <div class="lbl">First Lecture</div>
+          </div>
+          <span class="progress-arrow">&rarr;</span>
+          <div class="progress-step">
+            <div class="val">{{ progress.last_lecture_accuracy }}%</div>
+            <div class="lbl">Last Lecture</div>
+          </div>
+          {% if progress.final_quiz_accuracy is not none %}
+            <span class="progress-arrow">&rarr;</span>
+            <div class="progress-step">
+              <div class="val">{{ progress.final_quiz_accuracy }}%</div>
+              <div class="lbl">Final Quiz</div>
+            </div>
+          {% endif %}
+          {% if progress.improvement is not none %}
+            <span class="progress-delta {% if progress.improvement > 0 %}up{% elif progress.improvement < 0 %}down{% else %}flat{% endif %}">
+              {% if progress.improvement > 0 %}+{% endif %}{{ progress.improvement }}% improvement
+            </span>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    <h2 class="section-title">Question Breakdown</h2>
+
+    {% for item in results %}
+      <div class="question-card {% if not item.is_correct %}incorrect{% endif %}">
+        <div class="question-card-head">
+          <div class="question-title"><span class="qnum">{{ loop.index }}.</span>{{ item.question }}</div>
+          <span class="status-pill {{ item.verification_status }}">
+            {% if item.verification_status == 'verified' %}&#10003; Verified
+            {% elif item.verification_status == 'flagged' %}&#9888; Flagged
+            {% else %}? Unverified{% endif %}
+          </span>
+        </div>
+
+        <div class="answer-row">
+          <span class="answer-label">Your Answer</span>
+          <span class="answer-value {% if item.is_correct %}correct-text{% else %}incorrect-text{% endif %}">{{ item.user_answer }}</span>
+        </div>
+        <div class="answer-row">
+          <span class="answer-label">Correct Answer</span>
+          <span class="answer-value correct-text">{{ item.correct_answer }}</span>
+        </div>
+
+        {% if item.explanation %}
+          <div class="explanation-box">
+            <div class="exp-label">Explanation</div>
+            {{ item.explanation }}
+          </div>
+        {% endif %}
+
+        {% if item.verification_reason %}
+          <div class="explanation-box">
+            <div class="exp-label">Verification Note</div>
+            {{ item.verification_reason }}
+          </div>
+        {% endif %}
+
+        {% if item.source_snippet %}
+          <div class="source-box">Source: {{ item.source_snippet }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    {% if transcript %}
+      <details class="transcript-details">
+        <summary>View Lecture Transcript</summary>
+        <div class="transcript-text">{{ transcript }}</div>
+      </details>
+    {% endif %}
+
+  </main>
+
+</body>
+</html>

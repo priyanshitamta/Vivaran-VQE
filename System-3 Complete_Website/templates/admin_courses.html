@@ -1,0 +1,47 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Courses · Vivaran-VQE{% endblock %}
+{% block acontent %}
+{% set here = request.full_path %}
+<div class="page-head"><div><div class="eyebrow">Courses</div><h1>Course catalogue</h1>
+  <p class="subtle" style="font-size:.9rem;">{{ total }} course{{ 's' if total != 1 }} · source: {{ catalogue_source }} · {{ unpub_n }} unpublished</p></div>
+  <form method="post" action="{{ url_for('admin_reload_courses') }}"><button class="btn btn-outline btn-sm" type="submit" title="Re-read the course document">Reload catalogue</button></form>
+</div>
+<form method="get" class="filter-bar card">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search title, ID or category…">
+  <select name="source">
+    {% for v, l in [('all', 'All courses'), ('in_use', 'In use by learners'), ('uploaded', 'Uploaded by trainers'), ('unpublished', 'Unpublished')] %}<option value="{{ v }}" {{ 'selected' if source == v }}>{{ l }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+</form>
+<div class="table-wrap mt-2">
+  <table class="data">
+    <thead><tr><th>Course</th><th>Skills</th><th class="num">Recommended</th><th class="num">Enrolled</th><th class="num">Completed</th><th class="num">Quiz pass rate</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for c in items %}
+      <tr class="{{ 'muted-row' if c.unpublished }}">
+        <td><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a>
+          <div class="subtle" style="font-size:.78rem;">{{ c.course_id }}{% if c.video_source == 'trainer' %} · {{ c.provider }}{% endif %}</div></td>
+        <td class="subtle" style="font-size:.84rem;">{{ c.skill_names|join(', ') }}</td>
+        <td class="num">{{ c.st.recommended or 0 }}</td><td class="num">{{ c.st.enrolled or 0 }}</td><td class="num">{{ c.st.completed or 0 }}</td>
+        <td class="num">{{ (c.pass_rate|round|int|string + '%') if c.pass_rate is not none else '—' }}</td>
+        <td>{% if c.unpublished %}<span class="pill failed">Unpublished</span>{% else %}<span class="pill completed">Live</span>{% endif %}</td>
+        <td style="text-align:right;">
+          <form method="post" action="{{ url_for('admin_publish_course', course_id=c.course_id) }}">
+            <input type="hidden" name="publish" value="{{ '1' if c.unpublished else '0' }}"><input type="hidden" name="next" value="{{ here }}">
+            <button class="btn btn-sm {{ 'btn-ok' if c.unpublished else 'btn-outline' }}" type="submit">{{ 'Publish' if c.unpublished else 'Unpublish' }}</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}<tr><td colspan="8" class="muted-empty">No courses match.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% if pages > 1 %}
+<div class="pager">
+  {% if page > 1 %}<a class="btn btn-outline btn-sm" href="{{ url_for('admin_courses', q=q, source=source, page=page - 1) }}">← Previous</a>{% endif %}
+  <span class="subtle">Page {{ page }} of {{ pages }}</span>
+  {% if page < pages %}<a class="btn btn-outline btn-sm" href="{{ url_for('admin_courses', q=q, source=source, page=page + 1) }}">Next →</a>{% endif %}
+</div>
+{% endif %}
+<p class="hint mt-2">Unpublished courses stay visible to learners who already have them, but are never recommended or assignable again.</p>
+{% endblock %}

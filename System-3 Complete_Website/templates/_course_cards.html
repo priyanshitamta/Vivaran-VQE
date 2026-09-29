@@ -1,0 +1,27 @@
+{# One chunk of catalogue cards (also returned alone for infinite scroll). #}
+{% set st_label = {'completed': ('Completed', 'completed'), 'in_progress': ('In progress', 'in_progress'), 'on_path': ('On your roadmap', 'not_started')} %}
+{% for c in items %}
+<article class="cat-card">
+  <div class="cat-top">
+    <span class="eyebrow">{{ c.category or 'Course' }}</span>
+    {% if status.get(c.course_id) %}{% set sl = st_label[status[c.course_id]] %}<span class="pill {{ sl[1] }}">{{ sl[0] }}</span>{% endif %}
+  </div>
+  <h3><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a></h3>
+  {% if c.description and c.description|length > 12 %}<p class="cat-desc">{{ c.description }}</p>{% endif %}
+  <div class="cat-skills">
+    {% for sid in c.skills %}<span class="chip {{ 'match' if sid in picked }}">{{ c.skill_names[loop.index0] if c.skill_names|length > loop.index0 else sid }}</span>{% endfor %}
+  </div>
+  <div class="cat-meta">
+    <span><b>Level</b> {{ c.target_level }}</span>
+    {% if c.duration_minutes %}<span><b>Duration</b> {{ (c.duration_minutes / 60)|round(1) if c.duration_minutes >= 120 else c.duration_minutes }}{{ ' h' if c.duration_minutes >= 120 else ' min' }}</span>{% endif %}
+    {% if c.mode %}<span><b>Mode</b> {{ c.mode }}</span>{% endif %}
+    {% if c.provider %}<span><b>By</b> {{ c.provider }}</span>{% endif %}
+    <span><b>Videos</b> {{ c.videos|length }}</span>
+  </div>
+  <div class="cat-foot">
+    <span class="subtle" style="font-size:.8rem;">{{ c.course_id }}</span>
+    <a class="btn btn-primary btn-sm" href="{{ url_for('course_page', course_id=c.course_id) }}">Open course</a>
+  </div>
+</article>
+{% endfor %}
+{% if has_more %}<div class="cat-more" data-next="{{ page + 1 }}"></div>{% endif %}

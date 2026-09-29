@@ -1,0 +1,68 @@
+{# Shared by trainer.html and admin.html #}
+{% macro learners_table(learners) %}
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Learner</th><th>Email</th><th>Designation</th><th>Area of Experience</th>
+      <th class="num">Recommended</th><th class="num">In progress</th><th class="num">Completed</th><th class="num">Avg quiz</th></tr></thead>
+    <tbody>
+    {% for l in learners %}
+      <tr>
+        <td><b>{{ l.username }}</b></td>
+        <td class="subtle">{{ l.email or '—' }}</td>
+        <td>{{ l.designation or '— (profile incomplete)' }}{% if l.department %}<div class="subtle" style="font-size:.8rem;">{{ l.department }}</div>{% endif %}</td>
+        <td>{{ l.area_of_experience or '—' }}</td>
+        <td class="num" title="{{ l.roadmap|join(' → ') }}">{{ l.recommended }}</td>
+        <td class="num">{{ l.in_progress }}</td>
+        <td class="num">{{ l.completed }}</td>
+        <td class="num">{{ ('%.0f%%'|format(l.avg_score)) if l.avg_score is not none else '—' }}</td>
+      </tr>
+    {% else %}<tr><td colspan="8" class="muted-empty">No learners registered yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}
+
+{% macro courses_table(course_rows) %}
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Course</th><th>Category</th><th class="num">Videos</th><th class="num">Recommended to</th><th class="num">Enrolled</th><th class="num">Completed</th><th class="num">Quiz attempts</th><th class="num">Avg score</th><th>MCQs cached</th></tr></thead>
+    <tbody>
+    {% for c in course_rows %}
+      <tr>
+        <td><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a><div class="subtle" style="font-size:.78rem;">{{ c.course_id }}</div></td>
+        <td class="subtle">{{ c.category }}</td>
+        <td class="num">{{ c.videos }}</td>
+        <td class="num">{{ c.recommended }}</td>
+        <td class="num">{{ c.enrolled }}</td>
+        <td class="num">{{ c.completed }}</td>
+        <td class="num">{{ c.attempts }}</td>
+        <td class="num">{{ ('%.0f%%'|format(c.avg_score)) if c.avg_score is not none else '—' }}</td>
+        <td>{{ 'Yes' if c.quiz_cached else '—' }}</td>
+      </tr>
+    {% else %}<tr><td colspan="9" class="muted-empty">No courses recommended or taken yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}
+
+{% macro results_table(attempts) %}
+<div class="table-wrap">
+  <table class="data">
+    <thead><tr><th>Learner</th><th>Course</th><th class="num">Total</th><th class="num">Correct</th><th class="num">Wrong</th><th class="num">%</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>
+    {% for a in attempts %}
+      <tr>
+        <td>{{ a.username }}</td>
+        <td>{{ a.course_title }}</td>
+        <td class="num">{{ a.total }}</td>
+        <td class="num">{{ a.score }}</td>
+        <td class="num">{{ a.total - a.score }}</td>
+        <td class="num">{{ "%.0f"|format(a.accuracy or 0) }}%</td>
+        <td>{% if a.passed_bool %}<span class="pill completed">Passed</span>{% else %}<span class="pill failed">Not passed</span>{% endif %}</td>
+        <td class="subtle">{{ (a.finished_at or '')[:10] }}</td>
+      </tr>
+    {% else %}<tr><td colspan="8" class="muted-empty">No quiz results yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endmacro %}

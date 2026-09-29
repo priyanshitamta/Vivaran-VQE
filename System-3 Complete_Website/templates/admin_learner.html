@@ -1,0 +1,96 @@
+{% extends 'admin_base.html' %}
+{% from '_account_actions.html' import account_actions %}
+{% block title %}Admin · {{ student.username }} · Vivaran-VQE{% endblock %}
+{% block acontent %}
+{% set status_label = {'completed': 'Completed', 'in_progress': 'In progress', 'not_started': 'Not started'} %}
+{% set here = url_for('admin_learner', learner_id=student.id) %}
+<div class="mt-3"><a href="{{ url_for('admin_learners') }}" class="subtle" style="font-size:.9rem;">← All learners</a></div>
+<div class="page-head" style="margin-top:.75rem;">
+  <div><div class="eyebrow">Learner</div><h1>{{ student.username }} {% if not student.active %}<span class="pill failed" style="font-size:.8rem; vertical-align:middle;">Deactivated</span>{% endif %}</h1></div>
+  {{ account_actions({'id': student.id, 'username': student.username, 'active': student.active, 'role': 'learner'}, here) }}
+</div>
+
+<div class="card" style="padding:1.25rem 1.5rem;">
+  <div class="profile-strip">
+    <div><div class="k">Government email</div><div class="v">{{ student.email or '—' }}</div></div>
+    <div><div class="k">Designation</div><div class="v">{{ student.designation or '—' }}</div><div class="subtle" style="font-size:.8rem;">{{ student.department or '' }}</div></div>
+    <div><div class="k">Area of Experience</div><div class="v">{{ student.area_of_experience or '—' }}</div></div>
+    <div><div class="k">Trainer</div>
+      {% if student.role_id %}
+      <form method="post" action="{{ url_for('admin_assign_trainer') }}" class="assign-form">
+        <input type="hidden" name="learner_id" value="{{ student.id }}"><input type="hidden" name="next" value="{{ here }}">
+        <select name="trainer_id" onchange="this.form.submit()" aria-label="Trainer">
+          <option value="" {{ 'selected' if not student.trainer_id }}>— Unassigned —</option>
+          {% for t in trainers if t.active %}<option value="{{ t.id }}" {{ 'selected' if student.trainer_id == t.id }}>{{ t.username }} ({{ t.students }})</option>{% endfor %}
+        </select>
+      </form>
+      {% else %}<div class="v">—</div>{% endif %}
+    </div>
+  </div>
+</div>
+
+{% if prog %}
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">🔥 {{ prog.streak }}</div><div class="l">Current streak</div></div>
+  <div class="kpi"><div class="n">{{ prog.longest }}</div><div class="l">Longest streak</div></div>
+  <div class="kpi"><div class="n">{{ prog.xp }}</div><div class="l">XP · Level {{ prog.level.number }} {{ prog.level.name }}</div></div>
+  <div class="kpi"><div class="n">{{ prog.badges_earned }}/{{ prog.badges|length }}</div><div class="l">Badges</div></div>
+</div>
+{% endif %}
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">{{ d.rows|length }}</div><div class="l">Courses</div></div>
+  <div class="kpi"><div class="n">{{ d.completed }}</div><div class="l">Completed</div></div>
+  <div class="kpi"><div class="n">{{ d.overall }}%</div><div class="l">Overall progress</div></div>
+  <div class="kpi"><div class="n">{{ ('%.0f%%'|format(d.avg_score)) if d.avg_score is not none else '—' }}</div><div class="l">Average quiz</div></div>
+</div>
+
+<div class="section">
+  <h2>Courses</h2>
+  <div class="table-wrap">
+    <table class="data">
+      <thead><tr><th>#</th><th>Course</th><th>Status</th><th style="min-width:140px;">Progress</th><th class="num">Best quiz</th><th></th></tr></thead>
+      <tbody>
+      {% for r in d.rows %}
+        <tr><td class="subtle">{{ r.step or '—' }}</td>
+          <td><a href="{{ url_for('course_page', course_id=r.course_id) }}">{{ r.title }}</a>
+            <div style="margin-top:.2rem;">{% if r.added_by_trainer %}<span class="chip pin">📌 Added manually</span>{% endif %}{% if not r.on_path %}<span class="chip">Outside current path</span>{% endif %}<span class="subtle" style="font-size:.78rem;">{{ r.course_id }}</span></div></td>
+          <td><span class="pill {{ r.status }}">{{ status_label[r.status] }}</span></td>
+          <td><div class="bar {{ 'done' if r.status == 'completed' }}"><span style="width:{{ r.progress }}%"></span></div><div class="subtle" style="font-size:.78rem; margin-top:.2rem;">{{ r.progress }}%</div></td>
+          <td class="num">{% if r.best %}{{ r.best.score }}/{{ r.best.total }}{% else %}—{% endif %}</td>
+          <td style="text-align:right;">{% if r.on_path and r.status != 'completed' %}
+            <form method="post" action="{{ url_for('admin_learner_remove', learner_id=student.id, course_id=r.course_id) }}" data-msg="Remove “{{ r.title }}” from {{ student.username }}'s courses?" onsubmit="return confirm(this.dataset.msg);"><button class="btn btn-sm btn-danger-outline" type="submit">Remove</button></form>{% endif %}</td></tr>
+      {% else %}<tr><td colspan="6" class="muted-empty">No courses yet.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% if student.role_id %}
+<div class="section" id="add">
+  <h2>Add a course</h2>
+  <form method="get" action="{{ here }}#add" class="search-row">
+    <input type="search" name="q" value="{{ q }}" placeholder="Search the catalogue by title, skill or course ID…">
+    <button class="btn btn-primary btn-sm" type="submit">Search</button>
+  </form>
+  {% if q %}
+  <div class="table-wrap mt-2"><table class="data"><tbody>
+    {% for c in results %}
+      <tr><td><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a><div class="subtle" style="font-size:.78rem;">{{ c.course_id }} · {{ c.skill_names|join(', ') }}</div></td>
+        <td style="text-align:right;"><form method="post" action="{{ url_for('admin_learner_add', learner_id=student.id) }}"><input type="hidden" name="course_id" value="{{ c.course_id }}"><button class="btn btn-primary btn-sm" type="submit">Add</button></form></td></tr>
+    {% else %}<tr><td class="muted-empty">No courses match “{{ q }}”.</td></tr>{% endfor %}
+  </tbody></table></div>
+  {% endif %}
+</div>
+{% endif %}
+
+<div class="section">
+  <h2>Quiz results</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Course</th><th class="num">Total</th><th class="num">Correct</th><th class="num">Wrong</th><th class="num">%</th><th>Status</th><th>Date</th></tr></thead>
+    <tbody>{% for a in d.attempts %}
+      <tr><td>{{ a.course_title }}</td><td class="num">{{ a.total }}</td><td class="num">{{ a.score }}</td><td class="num">{{ a.total - a.score }}</td><td class="num">{{ "%.0f"|format(a.accuracy or 0) }}%</td>
+        <td>{% if a.passed_bool %}<span class="pill completed">Passed</span>{% else %}<span class="pill failed">Not passed</span>{% endif %}</td><td class="subtle">{{ (a.finished_at or '')[:10] }}</td></tr>
+    {% else %}<tr><td colspan="7" class="muted-empty">No quizzes taken yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

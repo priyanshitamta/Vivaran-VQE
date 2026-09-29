@@ -1,0 +1,164 @@
+{% extends 'trainer_base.html' %}
+{% block title %}Trainer Dashboard · Vivaran-VQE{% endblock %}
+{% block tcontent %}
+<div class="hero-banner">
+  <div>
+    <div class="eyebrow">Trainer Dashboard</div>
+    <h1>Welcome back, {{ trainer.username }}</h1>
+    <p>You're guiding {{ stats.students }} student{{ 's' if stats.students != 1 }}{% if pending_reviews %} · {{ pending_reviews }} AI question{{ 's' if pending_reviews != 1 }} waiting for your review{% endif %}.</p>
+    <div class="mt-1">{% for sid in tprofile.specialisations %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}</div>
+  </div>
+  <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+    <a class="btn btn-light" href="{{ url_for('trainer_uploads') }}#upload">+ Upload a course</a>
+    {% if unassigned %}
+    <form method="post" action="{{ url_for('trainer_claim') }}"><button class="btn btn-light" type="submit">Take new students ({{ unassigned }} waiting)</button></form>
+    {% endif %}
+  </div>
+</div>
+{% if request.args.msg %}<div class="form-ok mt-2">{{ request.args.msg }}</div>{% endif %}
+
+<div class="kpis" style="margin-top:1.25rem;">
+  <div class="kpi"><div class="n">{{ stats.students }}</div><div class="l">My students</div></div>
+  <div class="kpi"><div class="n">{{ stats.avg_progress }}%</div><div class="l">Average progress</div></div>
+  <div class="kpi"><div class="n">{{ stats.completed }}</div><div class="l">Courses completed</div></div>
+  <div class="kpi"><div class="n">{{ stats.quizzes }}</div><div class="l">Quizzes taken</div></div>
+  <div class="kpi"><div class="n">{{ (stats.avg_score|string + '%') if stats.avg_score is not none else '—' }}</div><div class="l">Average quiz score</div></div>
+</div>
+
+<div class="dash-grid">
+  <!-- ======================= left: main column ======================= -->
+  <div>
+    <div class="section">
+      <h2>My students <span class="count">click a student to see details and edit their courses</span></h2>
+      {% if students %}
+      <input type="search" id="studentSearch" placeholder="Search students by name, designation or field…" class="mb-2" aria-label="Search students">
+      <div class="table-wrap">
+        <table class="data clickable" id="studentTable">
+          <thead><tr><th>Student</th><th>Designation &amp; field</th><th class="num">Streak</th><th class="num">Courses</th><th class="num">Done</th><th style="min-width:120px;">Progress</th><th class="num">Avg quiz</th></tr></thead>
+          <tbody>
+          {% for s in students %}
+            <tr onclick="location.href='{{ url_for('trainer_student', learner_id=s.id) }}'">
+              <td><a href="{{ url_for('trainer_student', learner_id=s.id) }}"><b>{{ s.username }}</b></a></td>
+              <td>{{ s.designation }} <span class="subtle" style="font-size:.8rem;">· {{ s.department }}</span><div style="margin-top:.2rem;"><span class="chip">{{ s.area_of_experience }}</span></div></td>
+              <td class="num" title="{{ s.prog.xp }} XP · Level {{ s.prog.level.number }}">{% if s.prog.streak %}🔥 {{ s.prog.streak }}{% else %}<span class="subtle">0</span>{% endif %}</td>
+              <td class="num">{{ s.courses }}</td>
+              <td class="num">{{ s.completed }}</td>
+              <td><div class="bar {{ 'done' if s.overall == 100 }}"><span style="width:{{ s.overall }}%"></span></div><div class="subtle" style="font-size:.78rem; margin-top:.2rem;">{{ s.overall }}%</div></td>
+              <td class="num">{{ ('%.0f%%'|format(s.avg_score)) if s.avg_score is not none else '—' }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="card center"><p><b>No students assigned yet.</b></p>
+        <p class="subtle mt-1" style="font-size:.9rem;">New learners are assigned to trainers automatically when they register{% if unassigned %}, and {{ unassigned }} learner{{ 's are' if unassigned != 1 else ' is' }} waiting — use the button above{% endif %}.</p></div>
+      {% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Questions to review <span class="count">AI-generated MCQs for the courses you uploaded</span></h2>
+      {% if pending_reviews %}
+      <div class="review-cta">
+        <div><b>{{ pending_reviews }}</b> question{{ 's' if pending_reviews != 1 }} waiting for your approval
+          <div class="subtle" style="font-size:.88rem;">Approve, edit or reject them — rejected questions never reach learners again.</div></div>
+        <a class="btn btn-primary" href="{{ url_for('trainer_verify') }}">Review now</a>
+      </div>
+      {% elif uploads_total %}
+      <p class="muted-empty">All caught up — no questions waiting. <a href="{{ url_for('trainer_verify', f='all') }}">See reviewed questions</a>.</p>
+      {% else %}
+      <p class="muted-empty">Upload a course and generate its questions to review them here.</p>
+      {% endif %}
+    </div>
+
+    <div class="section">
+      <h2>Top courses among my students</h2>
+      {% if top_courses %}
+      <div class="table-wrap">
+        <table class="data">
+          <thead><tr><th>Course</th><th class="num">Students</th><th class="num">In progress</th><th class="num">Completed</th><th class="num">Avg score</th></tr></thead>
+          <tbody>
+          {% for c in top_courses %}
+            <tr><td><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a>{% if c.uploaded %} <span class="chip">Uploaded</span>{% endif %}</td>
+              <td class="num">{{ c.students|length }}</td><td class="num">{{ c.in_progress }}</td><td class="num">{{ c.completed }}</td>
+              <td class="num">{{ ('%.0f%%'|format(c.avg_score)) if c.avg_score is not none else '—' }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-1" style="font-size:.88rem;"><a href="{{ url_for('trainer_assigned_courses') }}">All assigned courses →</a></p>
+      {% else %}<p class="muted-empty">No courses assigned yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <!-- ======================= right: side column ======================= -->
+  <div style="margin-top:2rem;">
+    {% if approvals %}
+    <div class="panel-card accent">
+      <h3>Courses to approve <a href="{{ url_for('trainer_approvals') }}">Review ({{ pending_approvals }})</a></h3>
+      <ul class="mini-list">
+        {% for c in approvals %}
+        <li><div><a href="{{ url_for('trainer_approvals') }}#c-{{ c.id }}"><b>{{ c.title }}</b></a>
+          <div class="sub">by {{ c.trainer_username }} · {% for sid in c.shared %}{{ skill_name(sid) }}{{ ', ' if not loop.last }}{% endfor %}</div></div></li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <div class="panel-card">
+      <h3>Needs attention <span class="count">{{ attention|length }}</span></h3>
+      {% if attention %}
+      <ul class="mini-list">
+        {% for a in attention %}
+        <li><div><span class="alert-dot"></span><a href="{{ url_for('trainer_student', learner_id=a.id) }}"><b>{{ a.name }}</b></a><div class="sub">{{ a.why }}</div></div></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">Everyone is on track.</p>{% endif %}
+    </div>
+
+    <div class="panel-card">
+      <h3>Recent activity</h3>
+      {% if recent %}
+      <ul class="mini-list">
+        {% for a in recent %}
+        <li><div><b>{{ names.get(a.user_id, a.username) }}</b> took a quiz<div class="sub">{{ a.course_title }} · {{ (a.finished_at or '')[:10] }}</div></div>
+          <div style="text-align:right; white-space:nowrap;"><b>{{ a.score }}/{{ a.total }}</b><div>{% if a.passed_bool %}<span class="pill completed">Passed</span>{% else %}<span class="pill failed">Not passed</span>{% endif %}</div></div></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">No quiz activity yet.</p>{% endif %}
+    </div>
+
+    <div class="panel-card">
+      <h3>My uploaded courses <a href="{{ url_for('trainer_uploads') }}">View all ({{ uploads_total }})</a></h3>
+      {% if uploads %}
+      <ul class="mini-list">
+        {% for u in uploads %}
+        <li><div><a href="{{ url_for('course_page', course_id=u.course_id) }}"><b>{{ u.title }}</b></a>
+            <div class="sub">{{ u.course_id }} · assigned to {{ u.assigned }} student{{ 's' if u.assigned != 1 }}</div></div>
+          <div style="text-align:right; white-space:nowrap; font-size:.82rem;">
+            {% if u.approval == 'pending' %}<span class="pill in_progress">Awaiting approval</span>
+            {% elif u.approval == 'rejected' %}<a href="{{ url_for('trainer_upload_edit', row_id=u.id) }}" class="pill failed">Rejected — edit</a>
+            {% else %}<span class="pill completed">Live</span>{% endif %}
+            <div style="margin-top:.3rem;">{% if u.pending %}<a href="{{ url_for('trainer_verify', course=u.course_id) }}" class="subtle">{{ u.pending }} Qs to review</a>{% elif not u.questions %}<span class="subtle">No quiz yet</span>{% endif %}</div>
+          </div></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="muted-empty" style="font-size:.9rem;">No uploads yet.</p>{% endif %}
+      <a class="btn btn-primary btn-sm mt-2" style="width:100%; text-align:center;" href="{{ url_for('trainer_uploads') }}#upload">+ Upload a course</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    var box = document.getElementById('studentSearch');
+    if (!box) return;
+    box.addEventListener('input', function () {
+      var q = box.value.toLowerCase();
+      Array.prototype.forEach.call(document.querySelectorAll('#studentTable tbody tr'), function (tr) {
+        tr.style.display = tr.textContent.toLowerCase().indexOf(q) === -1 ? 'none' : '';
+      });
+    });
+  })();
+</script>
+{% endblock %}

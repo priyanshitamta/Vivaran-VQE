@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Access denied · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="card center mt-4" style="max-width:520px; margin-left:auto; margin-right:auto;">
+  <h1 style="font-size:1.4rem; color:var(--brand-deep);">Access denied</h1>
+  <p class="subtle mt-1">Your account ({{ current_role or 'guest' }}) does not have access to this page.</p>
+  <a class="btn btn-primary mt-3" href="{{ home_url }}">Go to my dashboard</a>
+</div>
+{% endblock %}

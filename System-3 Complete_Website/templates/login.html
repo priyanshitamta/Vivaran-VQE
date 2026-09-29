@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vivaran-VQE — Login</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-inner">
+      <div class="brand-big">Vivaran<span class="dot">-VQE</span></div>
+      <div class="brand-full">Vivaran Validation, Questionnaire &amp; Evaluation Portal</div>
+      <div class="auth-card card">
+        <div class="tabs" role="tablist" id="roleTabs">
+          <button type="button" class="active" data-role="learner">Learner</button>
+          <button type="button" data-role="trainer">Trainer</button>
+          <button type="button" data-role="admin">Admin</button>
+        </div>
+        <div id="loginError" class="form-error" style="display:none;"></div>
+        <form id="loginForm" novalidate>
+          <div class="field">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" autocomplete="username" required>
+          </div>
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;" id="loginBtn">Login</button>
+          <div class="center" id="wantRegisterWrap" style="display:none; margin-top:.9rem;">
+            <a href="#" id="wantRegister">Want to register instead?</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% include '_register_modal.html' %}
+  <script>
+    (function () {
+      var form = document.getElementById('loginForm');
+      var errBox = document.getElementById('loginError');
+      var pwd = document.getElementById('password');
+      var failed = false;
+      var role = 'learner';
+      Array.prototype.forEach.call(document.querySelectorAll('#roleTabs button'), function (b) {
+        b.addEventListener('click', function () {
+          Array.prototype.forEach.call(document.querySelectorAll('#roleTabs button'), function (x) { x.classList.remove('active'); });
+          b.classList.add('active');
+          role = b.getAttribute('data-role');
+          document.getElementById('wantRegisterWrap').style.display = (failed && role === 'learner') ? 'block' : 'none';
+        });
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        errBox.style.display = 'none';
+        var username = document.getElementById('username').value.trim();
+        var password = pwd.value;
+        if (!username || !password) {
+          errBox.textContent = 'Please enter both username and password.';
+          errBox.style.display = 'block';
+          return;
+        }
+        fetch('/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: username, password: password, role: role })
+        }).then(function (r) {
+          return r.json().then(function (d) { return { ok: r.ok, data: d }; });
+        }).then(function (res) {
+          if (res.ok) {
+            window.location.href = res.data.redirect || '/';
+          } else {
+            failed = true;
+            pwd.value = '';
+            errBox.textContent = res.data.error || 'Incorrect username or password. Please try again.';
+            errBox.style.display = 'block';
+            document.getElementById('wantRegisterWrap').style.display = role === 'learner' ? 'block' : 'none';
+            document.getElementById('username').focus();
+          }
+        }).catch(function () {
+          errBox.textContent = 'Could not reach the server. Please try again.';
+          errBox.style.display = 'block';
+        });
+      });
+
+      document.getElementById('wantRegister').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('registerModal').classList.add('active');
+      });
+    })();
+  </script>
+</body>
+</html>

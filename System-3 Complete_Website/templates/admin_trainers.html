@@ -1,0 +1,30 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Trainers · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Trainers</div><h1>Trainers &amp; workload</h1>
+  <p class="subtle" style="font-size:.9rem;">Balanced load ≈ {{ target }} student{{ 's' if target != 1 }} per active trainer.</p></div>
+  <div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+    <form method="post" action="{{ url_for('admin_assign_unassigned') }}"><button class="btn btn-outline btn-sm" type="submit" {{ 'disabled' if not unassigned }}>Assign {{ unassigned }} unassigned learner{{ 's' if unassigned != 1 }}</button></form>
+    <form method="post" action="{{ url_for('admin_balance') }}" data-msg="Move students between trainers so everyone has a similar load (best field match first)?" onsubmit="return confirm(this.dataset.msg);"><button class="btn btn-primary btn-sm" type="submit">Auto-balance</button></form>
+  </div>
+</div>
+<div class="table-wrap">
+  <table class="data clickable">
+    <thead><tr><th>Trainer</th><th>Specialisations</th><th class="num">Students</th><th style="min-width:130px;">Load</th><th class="num">Students' avg progress</th><th class="num">Uploads (live)</th><th class="num">Reviews done</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for t in rows %}
+      <tr onclick="location.href='{{ url_for('admin_trainer', trainer_id=t.id) }}'">
+        <td><a href="{{ url_for('admin_trainer', trainer_id=t.id) }}"><b>{{ t.username }}</b></a><div class="subtle" style="font-size:.8rem;">{{ t.email or '' }}</div></td>
+        <td>{% if t.has_profile %}{% for sid in t.specialisations %}<span class="chip">{{ skill_name(sid) }}</span>{% endfor %}{% else %}<span class="subtle">Set at first login</span>{% endif %}</td>
+        <td class="num">{{ t.students }}</td>
+        <td><div class="bar {{ 'over' if target and t.students > target }}"><span style="width:{{ ((t.students / target * 100) if target else 0)|round|int if t.students <= target else 100 }}%"></span></div></td>
+        <td class="num">{{ (t.avg_progress|string + '%') if t.avg_progress is not none else '—' }}</td>
+        <td class="num">{{ t.uploads }} ({{ t.live_uploads }})</td>
+        <td class="num">{{ t.reviews }}</td>
+        <td>{% if t.active %}<span class="pill completed">Active</span>{% else %}<span class="pill failed">Deactivated</span>{% endif %}</td>
+      </tr>
+    {% else %}<tr><td colspan="8" class="muted-empty">No trainers yet.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

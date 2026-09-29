@@ -1,0 +1,21 @@
+# ==============================================================================
+# System 1 - Recommendation Engine | DORMANT NLP dependencies (Tier 2 semantic
+# embeddings)
+# ------------------------------------------------------------------------------
+# DORMANT NLP CODE - these are NOT installed by default. System 1 runs entirely
+# on Tier 1 (tag-overlap scoring) without them. Kept for future use (e.g. a
+# resume-parsing NLP pipeline that extracts skills and feeds the same matching
+# algorithm).
+# Install ONLY if you want the embedding-based matching upgrade (Stage C Tier 2).
+#
+# IMPORTANT (Windows): plain `pip install torch` pulls the multi-GB CUDA build
+# even without an NVIDIA GPU. Prefer the CPU-only wheels:
+#
+#   pip install -r requirements-tier2.txt --index-url https://download.pytorch.org/whl/cpu
+#
+# Model weights (all-MiniLM-L6-v2, ~90 MB) download automatically on first use.
+# ==============================================================================
+
+numpy>=1.26                # Cosine-similarity math (also pulled in by pandas)
+sentence-transformers>=2.7 # Loader for the all-MiniLM-L6-v2 embedding model
+torch>=2.3                 # Backend that runs the embedding model

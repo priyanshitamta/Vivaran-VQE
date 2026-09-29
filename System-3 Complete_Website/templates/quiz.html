@@ -1,0 +1,52 @@
+{% extends 'learner_base.html' if current_role == 'learner' else 'base.html' %}
+{% block title %}Quiz · Vivaran-VQE{% endblock %}
+{% block content %}
+<div class="center mb-2">
+  <div class="section-title" style="margin:.75rem 0 .25rem;">Course Quiz</div>
+  <h1 style="font-size:1.35rem; color:var(--brand-deep);">{{ attempt.course_title }}</h1>
+  <p class="subtle" style="font-size:.9rem;">{{ questions|length }} questions generated from the lecture video</p>
+</div>
+
+<p class="progress-note">Answer every question, then submit. Select one option per question.</p>
+
+<form method="post" action="{{ url_for('quiz_attempt', attempt_id=attempt.id) }}" id="quizForm">
+  {% for q in questions %}
+  <div class="qcard" data-required="1">
+    <div class="qtext"><span class="qid">Q{{ q.id }}.</span>{{ q.question }}</div>
+    {% for opt in q.options %}
+    <label class="opt-wrap" style="display:block;">
+      <input type="radio" name="q_{{ q.id }}" value="{{ opt }}" required>
+      <span class="opt">{{ opt }}</span>
+    </label>
+    {% endfor %}
+  </div>
+  {% endfor %}
+
+  <div class="center mt-3 mb-4">
+    <button type="submit" class="btn btn-primary" id="submitQuiz" style="min-width:220px;">Submit Quiz</button>
+  </div>
+</form>
+{% endblock %}
+{% block scripts %}
+<script>
+  (function () {
+    document.getElementById('quizForm').addEventListener('submit', function (e) {
+      var unanswered = Array.prototype.slice.call(document.querySelectorAll('.qcard'))
+        .filter(function (card) {
+          return !card.querySelector('input[type=radio]:checked');
+        });
+      if (unanswered.length) {
+        e.preventDefault();
+        var first = unanswered[0];
+        first.style.borderColor = 'var(--danger)';
+        alert('Please answer every question before submitting (' + unanswered.length + ' left unanswered).');
+        first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      var btn = document.getElementById('submitQuiz');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+    });
+  })();
+</script>
+{% endblock %}

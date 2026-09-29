@@ -1,0 +1,51 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Quiz quality · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Quiz quality</div><h1>How well the quizzes work</h1></div></div>
+<div class="kpis kpis-4">
+  <div class="kpi"><div class="n">{{ attempts }}</div><div class="l">Graded quizzes</div></div>
+  <div class="kpi"><div class="n">{{ (overall|round|int|string + '%') if overall is not none else '—' }}</div><div class="l">Overall pass rate</div></div>
+  <div class="kpi"><div class="n">{{ flagged|length }}</div><div class="l">AI-flagged questions</div></div>
+  <div class="kpi"><div class="n">{{ coverage|selectattr('questions')|list|length }}/{{ coverage|length }}</div><div class="l">Uploads with questions</div></div>
+</div>
+
+<div class="section"><h2>Pass rate by course <span class="count">lowest first · pass mark {{ threshold|round|int }}%</span></h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Course</th><th class="num">Attempts</th><th style="min-width:160px;">Pass rate</th><th class="num">Average score</th></tr></thead>
+    <tbody>{% for c in course_rows %}
+      <tr><td><a href="{{ url_for('course_page', course_id=c.course_id) }}">{{ c.title }}</a></td><td class="num">{{ c.attempts }}</td>
+        <td><div class="bar {{ 'done' if (c.pass_rate or 0) >= 60 }}"><span style="width:{{ c.pass_rate or 0 }}%"></span></div><div class="subtle" style="font-size:.78rem;">{{ c.pass_rate|round|int }}%</div></td>
+        <td class="num">{{ c.avg }}%</td></tr>
+    {% else %}<tr><td colspan="4" class="muted-empty">No quizzes taken yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+
+<div class="section"><h2>Most-missed questions <span class="count">candidates for review or better teaching</span></h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Question</th><th>Correct answer</th><th>Course</th><th class="num">Asked</th><th class="num">Wrong</th></tr></thead>
+    <tbody>{% for m in missed %}
+      <tr><td>{{ m.question }}</td><td class="subtle">{{ m.answer }}</td><td class="subtle">{{ m.course }}</td><td class="num">{{ m.asked }}</td><td class="num"><b>{{ m.pct|round|int }}%</b></td></tr>
+    {% else %}<tr><td colspan="5" class="muted-empty">No missed questions yet.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+
+<div class="section" id="flagged"><h2>Questions flagged by the AI fact-check</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Question</th><th>Course</th><th>Trainer review</th></tr></thead>
+    <tbody>{% for f in flagged %}
+      <tr><td>{{ f.question }}</td><td class="subtle">{{ f.title }}</td>
+        <td><span class="pill {{ {'approved':'completed','rejected':'failed','pending':'in_progress'}[f.status] }}">{{ f.status|title }}</span></td></tr>
+    {% else %}<tr><td colspan="3" class="muted-empty">No flagged questions.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+
+<div class="section"><h2>Verification of uploaded courses</h2>
+  <div class="table-wrap"><table class="data">
+    <thead><tr><th>Course</th><th>Uploaded by</th><th class="num">Questions</th><th class="num">Approved</th><th class="num">Rejected</th><th class="num">Pending</th></tr></thead>
+    <tbody>{% for c in coverage %}
+      <tr><td>{{ c.title }} <span class="subtle" style="font-size:.78rem;">{{ c.course_id }}</span></td><td>{{ c.trainer_username }}</td>
+        <td class="num">{{ c.questions }}</td><td class="num">{{ c.approved }}</td><td class="num">{{ c.rejected }}</td><td class="num">{{ c.pending }}</td></tr>
+    {% else %}<tr><td colspan="6" class="muted-empty">No uploaded courses.</td></tr>{% endfor %}</tbody>
+  </table></div>
+</div>
+{% endblock %}

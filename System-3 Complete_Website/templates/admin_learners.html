@@ -1,0 +1,37 @@
+{% extends 'admin_base.html' %}
+{% block title %}Admin · Learners · Vivaran-VQE{% endblock %}
+{% block acontent %}
+<div class="page-head"><div><div class="eyebrow">Learners</div><h1>All learners</h1>
+  <p class="subtle" style="font-size:.9rem;">Showing {{ rows|length }} of {{ total }}. Click a learner for their courses, progress and admin actions.</p></div>
+  <a class="btn btn-outline btn-sm" href="{{ url_for('admin_report_csv', name='learners') }}">Download CSV</a>
+</div>
+<form method="get" class="filter-bar card">
+  <input type="search" name="q" value="{{ f.q }}" placeholder="Search name, email, designation…">
+  <select name="department"><option value="">All departments</option>{% for d in departments %}<option {{ 'selected' if f.department == d }}>{{ d }}</option>{% endfor %}</select>
+  <select name="trainer"><option value="">Any trainer</option><option value="none" {{ 'selected' if f.trainer == 'none' }}>— No trainer —</option>{% for t in trainers %}<option value="{{ t.id }}" {{ 'selected' if f.trainer == t.id|string }}>{{ t.username }}</option>{% endfor %}</select>
+  <select name="status">
+    {% for v, l in [('', 'Any status'), ('not_started', 'Not started'), ('in_progress', 'Has a course in progress'), ('completed', 'Completed ≥ 1 course'), ('inactive', 'Deactivated')] %}<option value="{{ v }}" {{ 'selected' if f.status == v }}>{{ l }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+  {% if f.q or f.department or f.trainer or f.status %}<a class="btn btn-ghost btn-sm" href="{{ url_for('admin_learners') }}">Clear</a>{% endif %}
+</form>
+<div class="table-wrap mt-2">
+  <table class="data clickable">
+    <thead><tr><th>Learner</th><th>Designation &amp; field</th><th>Trainer</th><th class="num">Streak</th><th class="num">XP</th><th class="num">On path</th><th class="num">In progress</th><th class="num">Completed</th><th class="num">Avg quiz</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for l in rows %}
+      <tr onclick="location.href='{{ url_for('admin_learner', learner_id=l.id) }}'">
+        <td><a href="{{ url_for('admin_learner', learner_id=l.id) }}"><b>{{ l.username }}</b></a><div class="subtle" style="font-size:.8rem;">{{ l.email or '' }}</div></td>
+        <td>{% if l.designation %}{{ l.designation }} <span class="subtle" style="font-size:.8rem;">· {{ l.department }}</span><div style="margin-top:.2rem;"><span class="chip">{{ l.area_of_experience }}</span></div>{% else %}<span class="subtle">Profile incomplete</span>{% endif %}</td>
+        <td>{{ l.trainer_username or '—' }}</td>
+        <td class="num">{% if l.prog.streak %}🔥 {{ l.prog.streak }}{% else %}<span class="subtle">0</span>{% endif %}</td>
+        <td class="num">{{ l.prog.xp }}</td>
+        <td class="num">{{ l.recommended }}</td><td class="num">{{ l.in_progress }}</td><td class="num">{{ l.completed }}</td>
+        <td class="num">{{ ('%.0f%%'|format(l.avg_score)) if l.avg_score is not none else '—' }}</td>
+        <td>{% if l.active %}<span class="pill completed">Active</span>{% else %}<span class="pill failed">Deactivated</span>{% endif %}</td>
+      </tr>
+    {% else %}<tr><td colspan="10" class="muted-empty">No learners match.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
